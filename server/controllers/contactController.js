@@ -18,12 +18,12 @@ export const createContactInquiry = async (req, res, next) => {
 
     // Validate required fields
     if (
-      !name ||
-      !email ||
+      !name?.trim() ||
+      !email?.trim() ||
       !projectType ||
       !budget ||
       !timeline ||
-      !message
+      !message?.trim()
     ) {
       return res.status(400).json({
         success: false,
@@ -32,7 +32,8 @@ export const createContactInquiry = async (req, res, next) => {
       });
     }
 
-    // Save inquiry to MongoDB first
+    // Save inquiry to MongoDB first.
+    // MongoDB is the source of truth for a successful contact submission.
     const contact = await Contact.create({
       name: name.trim(),
       email: email.toLowerCase().trim(),
@@ -46,12 +47,12 @@ export const createContactInquiry = async (req, res, next) => {
 
     /*
      * IMPORTANT:
-     * Email notification must NOT block the API response.
+     * The contact has already been successfully saved to MongoDB.
      *
-     * MongoDB save is already successful.
-     * We immediately send success response to frontend.
+     * Email is OPTIONAL.
+     * Email failure must NEVER make the contact submission fail.
      *
-     * Email will be attempted in the background.
+     * We intentionally do NOT await the email operation.
      */
     if (process.env.ENABLE_EMAIL_NOTIFICATIONS === 'true') {
       sendInquiryNotification(contact)
@@ -60,16 +61,18 @@ export const createContactInquiry = async (req, res, next) => {
         })
         .catch((mailError) => {
           console.error(
-            `[Mailer] Unable to send inquiry notification: ${mailError.message}`
+            '[Mailer] Email notification failed:',
+            mailError.message
           );
         });
     } else {
       console.log(
-        '[Mailer] Email notifications are disabled. Inquiry saved successfully.'
+        '[Mailer] Email notifications disabled. Inquiry saved successfully.'
       );
     }
 
-    // Send success response immediately after DB save
+    // IMPORTANT:
+    // Always return success after MongoDB save.
     return res.status(201).json({
       success: true,
       message:
@@ -99,13 +102,15 @@ export const getContactInquiries = async (req, res, next) => {
       filter.status = status;
     }
 
-    const skip = (Number(page) - 1) * Number(limit);
+    const pageNumber = Math.max(Number(page) || 1, 1);
+    const limitNumber = Math.min(Math.max(Number(limit) || 20, 1), 100);
+    const skip = (pageNumber - 1) * limitNumber;
 
     const [contacts, total] = await Promise.all([
       Contact.find(filter)
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(Number(limit)),
+        .limit(limitNumber),
       Contact.countDocuments(filter),
     ]);
 
@@ -113,10 +118,10 @@ export const getContactInquiries = async (req, res, next) => {
       success: true,
       data: contacts,
       pagination: {
-        page: Number(page),
-        limit: Number(limit),
+        page: pageNumber,
+        limit: limitNumber,
         total,
-        pages: Math.ceil(total / Number(limit)),
+        pages: Math.ceil(total / limitNumber),
       },
     });
   } catch (error) {
@@ -131,7 +136,8 @@ export const updateContactStatus = async (req, res, next) => {
   try {
     const { status } = req.body;
 
-    const validStatuses = ['new', 'read', 'replied', 'archived'];
+    // These values MUST match the Contact model and admin frontend.
+    const validStatuses = ['new', 'contacted', 'completed'];
 
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
@@ -143,7 +149,10 @@ export const updateContactStatus = async (req, res, next) => {
     const contact = await Contact.findByIdAndUpdate(
       req.params.id,
       { status },
-      { new: true, runValidators: true }
+      {
+        new: true,
+        runValidators: true,
+      }
     );
 
     if (!contact) {
