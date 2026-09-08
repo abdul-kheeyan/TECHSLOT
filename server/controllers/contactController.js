@@ -32,50 +32,44 @@ export const createContactInquiry = async (req, res, next) => {
       });
     }
 
-    // --------------------------------------------------
-    // STEP 1: Save inquiry to MongoDB
-    // --------------------------------------------------
-    // MongoDB is the source of truth.
-    // If this succeeds, the inquiry is considered successful.
+    // Save inquiry to MongoDB first
     const contact = await Contact.create({
-      name,
-      email: email.toLowerCase(),
-      phone: phone || '',
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
+      phone: phone?.trim() || '',
       projectType,
       budget,
       timeline,
-      message,
+      message: message.trim(),
       status: 'new',
     });
 
-    console.log(
-      `[Contact] Inquiry saved successfully. ID: ${contact._id}`
-    );
-
-    // --------------------------------------------------
-    // STEP 2: Send email notification (OPTIONAL)
-    // --------------------------------------------------
-    // Email failure must NEVER make the contact submission fail.
-    try {
-      await sendInquiryNotification(contact);
-
+    /*
+     * IMPORTANT:
+     * Email notification must NOT block the API response.
+     *
+     * MongoDB save is already successful.
+     * We immediately send success response to frontend.
+     *
+     * Email will be attempted in the background.
+     */
+    if (process.env.ENABLE_EMAIL_NOTIFICATIONS === 'true') {
+      sendInquiryNotification(contact)
+        .then(() => {
+          console.log('[Mailer] Inquiry notification sent successfully.');
+        })
+        .catch((mailError) => {
+          console.error(
+            `[Mailer] Unable to send inquiry notification: ${mailError.message}`
+          );
+        });
+    } else {
       console.log(
-        `[Mailer] Inquiry notification sent successfully. ID: ${contact._id}`
+        '[Mailer] Email notifications are disabled. Inquiry saved successfully.'
       );
-    } catch (mailError) {
-      console.error(
-        `[Mailer] Email notification failed for inquiry ${contact._id}:`,
-        mailError.message
-      );
-
-      // IMPORTANT:
-      // Do NOT return an error here.
-      // The inquiry is already safely stored in MongoDB.
     }
 
-    // --------------------------------------------------
-    // STEP 3: Always return success after DB save
-    // --------------------------------------------------
+    // Send success response immediately after DB save
     return res.status(201).json({
       success: true,
       message:
@@ -83,13 +77,7 @@ export const createContactInquiry = async (req, res, next) => {
       data: contact,
     });
   } catch (error) {
-    // If MongoDB save itself fails,
-    // then the inquiry was NOT successfully submitted.
-    console.error(
-      '[Contact] Failed to save inquiry:',
-      error.message
-    );
-
+    console.error('[Contact] Error creating inquiry:', error);
     next(error);
   }
 };
@@ -99,22 +87,37 @@ export const createContactInquiry = async (req, res, next) => {
 // @access  Private/Admin
 export const getContactInquiries = async (req, res, next) => {
   try {
-    const { status } = req.query;
+    const {
+      status,
+      page = 1,
+      limit = 20,
+    } = req.query;
 
-    let query = {};
+    const filter = {};
 
     if (status && status !== 'all') {
-      query.status = status;
+      filter.status = status;
     }
 
-    const inquiries = await Contact.find(query).sort({
-      createdAt: -1,
-    });
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const [contacts, total] = await Promise.all([
+      Contact.find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(Number(limit)),
+      Contact.countDocuments(filter),
+    ]);
 
     return res.status(200).json({
       success: true,
-      count: inquiries.length,
-      data: inquiries,
+      data: contacts,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total,
+        pages: Math.ceil(total / Number(limit)),
+      },
     });
   } catch (error) {
     next(error);
@@ -128,25 +131,22 @@ export const updateContactStatus = async (req, res, next) => {
   try {
     const { status } = req.body;
 
-    // Validate status
-    if (!['new', 'contacted', 'completed'].includes(status)) {
+    const validStatuses = ['new', 'read', 'replied', 'archived'];
+
+    if (!validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
-        message:
-          'Status must be one of: new, contacted, completed.',
+        message: 'Invalid status.',
       });
     }
 
-    const inquiry = await Contact.findByIdAndUpdate(
+    const contact = await Contact.findByIdAndUpdate(
       req.params.id,
       { status },
-      {
-        new: true,
-        runValidators: true,
-      }
+      { new: true, runValidators: true }
     );
 
-    if (!inquiry) {
+    if (!contact) {
       return res.status(404).json({
         success: false,
         message: 'Contact inquiry not found.',
@@ -155,8 +155,8 @@ export const updateContactStatus = async (req, res, next) => {
 
     return res.status(200).json({
       success: true,
-      message: `Inquiry status updated to ${status}.`,
-      data: inquiry,
+      message: 'Contact status updated successfully.',
+      data: contact,
     });
   } catch (error) {
     next(error);
@@ -168,20 +168,18 @@ export const updateContactStatus = async (req, res, next) => {
 // @access  Private/Admin
 export const deleteContactInquiry = async (req, res, next) => {
   try {
-    const inquiry = await Contact.findById(req.params.id);
+    const contact = await Contact.findByIdAndDelete(req.params.id);
 
-    if (!inquiry) {
+    if (!contact) {
       return res.status(404).json({
         success: false,
-        message: 'Contact inquiry not found to delete.',
+        message: 'Contact inquiry not found.',
       });
     }
 
-    await inquiry.deleteOne();
-
     return res.status(200).json({
       success: true,
-      message: 'Inquiry deleted successfully.',
+      message: 'Contact inquiry deleted successfully.',
     });
   } catch (error) {
     next(error);
