@@ -146,3 +146,22 @@
   .navbar-nav, .navbar-cta { display: none !important; }
   .navbar-brand-image { height: 32px; }
 }
+@media (max-width: 767px) {
+  .navbar-inner {
+    min-width: 0;
+    padding-right: clamp(1rem, 5vw, 1.5rem);
+    padding-left: clamp(1rem, 5vw, 1.5rem);
+  }
+  .navbar-logo {
+    min-width: 0;
+  }
+  .navbar-brand-text {
+    white-space: nowrap;
+  }
+  .hamburger { flex: 0 0 40px; }
+  .mobile-drawer {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100vw;
+  }
+}

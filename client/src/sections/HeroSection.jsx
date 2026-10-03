@@ -76,12 +76,12 @@ export default function HeroSection() {
         spin={252}
         roll={13.5}
         lead={narrow ? 0.08 : tablet ? 0.1 : 0.08}
-        focus={narrow ? [0.62, 0.84] : tablet ? [0.7, 0.52] : [0.72, 0.5]}
+        focus={narrow ? [0.64, 0.9] : tablet ? [0.7, 0.52] : [0.72, 0.5]}
         scrim={narrow ? 'none' : 'left'}
         scrimStrength={0.92}
-        viewRadius={narrow ? 0.3 : tablet ? 2.7 : 1.3}
+        viewRadius={narrow ? 0.65 : tablet ? 2.7 : 1.3}
         starCount={narrow ? 650 : tablet ? 1100 : 1200}
-        glow={narrow ? 0.45 : tablet ? 1 : 1.15}
+        glow={narrow ? 1.1 : tablet ? 1 : 1.15}
         showOrbits={false}
         showSunTrack={true}
         interactive={true}
@@ -252,6 +252,26 @@ export default function HeroSection() {
         .hero-section .hero-proof { justify-content: flex-start !important; }
         }
         @media (max-width: 767px) {
+        .hero-section,
+        .hero-section .hero-orbital-background,
+        .hero-section .hero-content-shell,
+        .hero-section .hero-grid,
+        .hero-section .hero-copy {
+          box-sizing: border-box;
+          max-width: 100%;
+        }
+        .hero-section .hero-orbital-background {
+          overflow: hidden;
+        }
+        .hero-section .hero-content-shell {
+          align-items: flex-start;
+          padding-top: 2.5rem !important;
+          padding-bottom: 3rem !important;
+        }
+        .hero-section .container {
+          padding-left: clamp(1.25rem, 6vw, 1.5rem) !important;
+          padding-right: clamp(1.25rem, 6vw, 1.5rem) !important;
+        }
         .hero-section .hero-grid {
           grid-template-columns: minmax(0, 1fr) !important;
           text-align: left !important;
@@ -263,10 +283,15 @@ export default function HeroSection() {
           min-width: 0;
         }
         .hero-section .hero-title {
-          font-size: clamp(2.35rem, 9vw, 3.5rem) !important;
+          max-width: 100%;
+          font-size: clamp(2rem, 9.3vw, 3rem) !important;
+          line-height: 1.05 !important;
+          letter-spacing: -0.05em !important;
+          overflow-wrap: anywhere;
         }
         .hero-section .hero-description {
           max-width: 100% !important;
+          overflow-wrap: anywhere;
         }
         .hero-section .section-label {
           max-width: 100%;
@@ -275,33 +300,44 @@ export default function HeroSection() {
           letter-spacing: 0.075em;
         }
         .hero-section .hero-btns > a {
+          box-sizing: border-box;
           max-width: 100%;
+          justify-content: center;
+          padding-left: clamp(1rem, 5vw, 2rem) !important;
+          padding-right: clamp(1rem, 5vw, 2rem) !important;
         }
         .hero-section .hero-btns,
-        .hero-section .hero-proof { justify-content: flex-start !important; }
+        .hero-section .hero-proof {
+          max-width: 100%;
+          justify-content: flex-start !important;
+        }
+        .hero-section .hero-proof > p {
+          min-width: 0;
+          max-width: 100%;
+          overflow-wrap: anywhere;
+        }
         }
         @media (max-width: 640px) {
         .hero-section {
           min-height: max(calc(100svh - 72px), 680px) !important;
           }
-          .hero-section .hero-content-shell {
-            align-items: flex-start !important;
-            padding-top: 2.75rem !important;
-            padding-bottom: 3rem !important;
-          }
           .hero-section .hero-grid { gap: 0 !important; }
           .hero-section .hero-title { margin-bottom: 1.5rem !important; }
           .hero-section .hero-description { margin-bottom: 2rem !important; }
           .hero-section .hero-btns { margin-bottom: 2rem !important; }
-          .hero-section .hero-proof { row-gap: 0.65rem !important; }
+          .hero-section .hero-proof {
+            column-gap: 0.75rem !important;
+            row-gap: 0.65rem !important;
+          }
         }
         @media (max-width: 380px) {
-          .hero-section .hero-title {
-            font-size: clamp(2.15rem, 10.5vw, 2.6rem) !important;
-          }
           .hero-section .hero-content-shell {
             padding-top: 2rem !important;
             padding-bottom: 2.5rem !important;
+          }
+          .hero-section .hero-btns > a {
+            flex: 1 1 100%;
+            width: 100%;
           }
           .hero-section .section-label {
             padding: 0.4rem 0.65rem;
