@@ -76,10 +76,10 @@ export default function HeroSection() {
         spin={252}
         roll={13.5}
         lead={narrow ? 0.08 : tablet ? 0.1 : 0.08}
-        focus={narrow ? [0.64, 0.9] : tablet ? [0.7, 0.52] : [0.72, 0.5]}
+        focus={narrow ? [0.6, 0.78] : tablet ? [0.7, 0.52] : [0.72, 0.5]}
         scrim={narrow ? 'none' : 'left'}
         scrimStrength={0.92}
-        viewRadius={narrow ? 0.65 : tablet ? 2.7 : 1.3}
+        viewRadius={narrow ? 0.42 : tablet ? 2.7 : 1.3}
         starCount={narrow ? 650 : tablet ? 1100 : 1200}
         glow={narrow ? 1.1 : tablet ? 1 : 1.15}
         showOrbits={false}
@@ -265,7 +265,7 @@ export default function HeroSection() {
         }
         .hero-section .hero-content-shell {
           align-items: flex-start;
-          padding-top: 2.5rem !important;
+          padding-top: 1.25rem !important;
           padding-bottom: 3rem !important;
         }
         .hero-section .container {
@@ -332,7 +332,7 @@ export default function HeroSection() {
         }
         @media (max-width: 380px) {
           .hero-section .hero-content-shell {
-            padding-top: 2rem !important;
+            padding-top: 0.75rem !important;
             padding-bottom: 2.5rem !important;
           }
           .hero-section .hero-btns > a {
