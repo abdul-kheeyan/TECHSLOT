@@ -20,7 +20,7 @@ export default function WhyChooseSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <span className="section-label">Why techslot.dev</span>
+          <span className="section-label">Why techslot_dev</span>
           <h2 className="section-title">Engineering You Can <span className="text-gradient">Trust</span></h2>
           <p className="section-subtitle">
             Not just a developer — a technical partner committed to building products that perform, scale, and impress.

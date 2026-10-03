@@ -36,7 +36,7 @@ export default function ProjectsPage() {
     <>
       <SEO
         title="Projects"
-        description="Explore the techslot.dev portfolio — full-stack web applications, SaaS platforms, e-commerce, and business websites."
+        description="Explore the techslot_dev portfolio — full-stack web applications, SaaS platforms, e-commerce, and business websites."
         path="/projects"
       />
 

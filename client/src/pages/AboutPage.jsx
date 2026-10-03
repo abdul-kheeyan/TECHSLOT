@@ -22,7 +22,7 @@ export default function AboutPage() {
     <>
       <SEO
         title="About"
-        description="Learn about techslot.dev — a full-stack developer and UI engineer building premium digital products for businesses and startups."
+        description="Learn about techslot_dev — a full-stack developer and UI engineer building premium digital products for businesses and startups."
         path="/about"
       />
 
@@ -39,7 +39,7 @@ export default function AboutPage() {
               Engineering Digital Products with <span className="text-gradient">Purpose & Precision</span>
             </h1>
             <p style={{ fontSize: '1.05rem', color: 'var(--color-text-secondary)', lineHeight: 1.8, marginBottom: '1.25rem' }}>
-              I&apos;m a full-stack developer and UI engineer behind techslot.dev — specializing in the MERN stack, modern React applications, and production-grade backend systems. I partner with businesses, startups, and ambitious brands to turn ideas into high-performing digital products.
+              I&apos;m a full-stack developer and UI engineer behind techslot_dev — specializing in the MERN stack, modern React applications, and production-grade backend systems. I partner with businesses, startups, and ambitious brands to turn ideas into high-performing digital products.
             </p>
             <p style={{ fontSize: '1.05rem', color: 'var(--color-text-secondary)', lineHeight: 1.8 }}>
               With 5+ years of experience across e-commerce, SaaS, healthcare, and enterprise platforms, I bring a unique blend of technical depth and design sensibility to every project. From architecture to deployment, I own the full stack so you get one accountable partner — not a fragmented team.

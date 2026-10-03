@@ -125,8 +125,6 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
-:root[data-theme='light'] .admin-table th { background: rgba(37, 99, 235, 0.05); }
-
 .admin-table td {
   padding: var(--space-4) var(--space-5);
   border-bottom: 1px solid rgba(56, 189, 248, 0.06);

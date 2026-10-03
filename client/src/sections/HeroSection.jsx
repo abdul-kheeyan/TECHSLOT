@@ -1,149 +1,37 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import OrbitalHeroSection, { INNER_PLANETS } from '../components/OrbitalHeroSection';
 import {
   ArrowRight,
   BriefcaseBusiness,
   Building2,
-  Check,
   ChevronRight,
   Code2,
   Microscope,
-  Rocket,
   Star,
 } from 'lucide-react';
 
 const clientIcons = [BriefcaseBusiness, Code2, Building2, Microscope];
 
-const TechOrb = () => (
-  <div style={{ position: 'relative', width: '100%', maxWidth: 520, margin: '0 auto' }}>
-    {/* Outer glow rings */}
-    <div style={{ position: 'absolute', inset: -40, borderRadius: '50%', background: 'radial-gradient(ellipse at center, rgba(56,189,248,0.12) 0%, transparent 70%)', animation: 'pulse 4s ease-in-out infinite' }} />
-    
-    {/* Code window card */}
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 0.4 }}
-      style={{
-        background: 'rgba(13,21,39,0.9)',
-        backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(56,189,248,0.2)',
-        borderRadius: 20,
-        overflow: 'hidden',
-        boxShadow: '0 32px 80px rgba(0,0,0,0.6), 0 0 60px rgba(56,189,248,0.1)',
-      }}
-    >
-      {/* Window chrome */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 20px', borderBottom: '1px solid rgba(56,189,248,0.1)', background: 'rgba(5,9,20,0.5)' }}>
-        <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#ef4444' }} />
-        <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#f59e0b' }} />
-        <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#10b981' }} />
-        <span style={{ marginLeft: 'auto', fontSize: '0.7rem', color: 'var(--color-text-muted)', fontFamily: 'monospace' }}>techslot.dev/app.jsx</span>
-      </div>
-      
-      {/* Code content */}
-      <div style={{ padding: '1.5rem 1.75rem', fontFamily: 'JetBrains Mono, Fira Code, monospace', fontSize: '0.8rem', lineHeight: 1.85 }}>
-        {[
-          { indent: 0, text: 'const ', accent: false, word: 'buildProduct', after: ' = async () => {' },
-          { indent: 1, text: 'const ', accent: false, word: 'stack', after: ' = [' },
-          { indent: 2, items: ['"React"', '"Node.js"', '"MongoDB"'], colors: ['#38bdf8', '#10b981', '#f59e0b'] },
-          { indent: 1, text: '];', accent: false },
-          { indent: 1, text: '', accent: false, word: 'await ', after: 'deploy(stack);' },
-          { indent: 1, text: 'return ', accent: false, word: '"Premium Software"', after: ';', color: '#10b981' },
-          { indent: 0, text: '};', accent: false },
-        ].map((line, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, x: -8 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.6 + i * 0.08 }}
-            style={{ display: 'flex', alignItems: 'center', gap: 4 }}
-          >
-            <span style={{ color: '#4a5568', fontSize: '0.65rem', minWidth: 20, textAlign: 'right', userSelect: 'none' }}>{i + 1}</span>
-            <span style={{ paddingLeft: line.indent * 20 }}>
-              {line.items ? (
-                line.items.map((item, j) => (
-                  <span key={j}>
-                    <span style={{ color: line.colors[j] }}>{item}</span>
-                    {j < line.items.length - 1 && <span style={{ color: 'var(--color-text-muted)' }}>, </span>}
-                  </span>
-                ))
-              ) : (
-                <>
-                  <span style={{ color: '#7c3aed' }}>{line.text}</span>
-                  <span style={{ color: line.color || '#60a5fa' }}>{line.word}</span>
-                  <span style={{ color: 'var(--color-text-secondary)' }}>{line.after}</span>
-                </>
-              )}
-            </span>
-          </motion.div>
-        ))}
-        
-        {/* Cursor */}
-        <motion.div
-          animate={{ opacity: [1, 0, 1] }}
-          transition={{ duration: 1, repeat: Infinity }}
-          style={{ display: 'inline-block', width: 2, height: 14, background: 'var(--color-blue-accent)', marginLeft: 4, borderRadius: 1, verticalAlign: 'text-bottom' }}
-        />
-      </div>
-    </motion.div>
+function useHeroViewport() {
+  const [viewport, setViewport] = useState({ narrow: false, tablet: false });
 
-    {/* Floating badge cards */}
-    <motion.div
-      initial={{ opacity: 0, x: -24 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 1, duration: 0.6 }}
-      style={{
-        position: 'absolute',
-        left: -24,
-        top: '35%',
-        background: 'rgba(13,21,39,0.95)',
-        border: '1px solid rgba(56,189,248,0.25)',
-        borderRadius: 12,
-        padding: '0.6rem 1rem',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
-      }}
-    >
-      <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(37,99,235,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#60a5fa' }}>
-        <Rocket size={18} aria-hidden="true" />
-      </div>
-      <div>
-        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#fff' }}>Fast Delivery</div>
-        <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>On time, every time</div>
-      </div>
-    </motion.div>
+  useEffect(() => {
+    const narrowQuery = window.matchMedia('(max-width: 767px)');
+    const tabletQuery = window.matchMedia('(min-width: 768px) and (max-width: 1100px)');
+    const sync = () => setViewport({ narrow: narrowQuery.matches, tablet: tabletQuery.matches });
+    sync();
+    narrowQuery.addEventListener('change', sync);
+    tabletQuery.addEventListener('change', sync);
+    return () => {
+      narrowQuery.removeEventListener('change', sync);
+      tabletQuery.removeEventListener('change', sync);
+    };
+  }, []);
 
-    <motion.div
-      initial={{ opacity: 0, x: 24 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 1.1, duration: 0.6 }}
-      style={{
-        position: 'absolute',
-        right: -24,
-        bottom: '20%',
-        background: 'rgba(13,21,39,0.95)',
-        border: '1px solid rgba(56,189,248,0.25)',
-        borderRadius: 12,
-        padding: '0.6rem 1rem',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
-      }}
-    >
-      <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(16,185,129,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#34d399' }}>
-        <Check size={20} strokeWidth={3} aria-hidden="true" />
-      </div>
-      <div>
-        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#fff' }}>Clean Code</div>
-        <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)' }}>Production ready</div>
-      </div>
-    </motion.div>
-  </div>
-);
+  return viewport;
+}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -159,32 +47,91 @@ const itemVariants = {
 };
 
 export default function HeroSection() {
-  return (
-    <section style={{ position: 'relative', overflow: 'hidden', minHeight: 'calc(100vh - 72px)', display: 'flex', alignItems: 'center', paddingTop: '4rem', paddingBottom: '4rem' }}>
-      {/* Background glows */}
-      <div style={{ position: 'absolute', top: '-20%', left: '50%', transform: 'translateX(-50%)', width: '120%', height: '70%', background: 'radial-gradient(ellipse at 50% 20%, rgba(37,99,235,0.12) 0%, rgba(56,189,248,0.06) 40%, transparent 70%)', pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: 0, right: 0, width: '40%', height: '50%', background: 'radial-gradient(ellipse at 100% 100%, rgba(56,189,248,0.07) 0%, transparent 60%)', pointerEvents: 'none' }} />
-      
-      {/* Grid pattern */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        backgroundImage: `
-          linear-gradient(rgba(56,189,248,0.04) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(56,189,248,0.04) 1px, transparent 1px)
-        `,
-        backgroundSize: '60px 60px',
-        pointerEvents: 'none',
-        maskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%)',
-      }} />
+  const { narrow, tablet } = useHeroViewport();
 
-      <div className="container">
-        <div className="hero-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center' }}>
+  return (
+    <section
+      className="hero-section"
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        minHeight: 'calc(100vh - 72px)',
+        padding: 0,
+        background: '#020409',
+      }}
+    >
+      <OrbitalHeroSection
+        className="hero-orbital-background"
+        planets={INNER_PLANETS}
+        yearSeconds={16}
+        trailYears={narrow ? 6 : tablet ? 4.5 : 5}
+        compress={0.5}
+        maxTurns={narrow ? 3.2 : tablet ? 2.5 : 2.8}
+        planeSpread={1.25}
+        eccentricity={0.5}
+        alignToCourse={1}
+        driftSpeed={narrow ? 1.8 : tablet ? 1.4 : 1.5}
+        apex={[272, 53]}
+        tilt={narrow ? 45 : tablet ? 50 : 52}
+        spin={252}
+        roll={13.5}
+        lead={narrow ? 0.08 : tablet ? 0.1 : 0.08}
+        focus={narrow ? [0.62, 0.84] : tablet ? [0.7, 0.52] : [0.72, 0.5]}
+        scrim={narrow ? 'none' : 'left'}
+        scrimStrength={0.92}
+        viewRadius={narrow ? 0.3 : tablet ? 2.7 : 1.3}
+        starCount={narrow ? 650 : tablet ? 1100 : 1200}
+        glow={narrow ? 0.45 : tablet ? 1 : 1.15}
+        showOrbits={false}
+        showSunTrack={true}
+        interactive={true}
+        paused={false}
+        sunColor="#FFF2CC"
+        style={{
+          position: 'relative',
+          width: '100%',
+          minHeight: narrow
+            ? 'max(calc(100svh - 72px), 680px)'
+            : tablet
+              ? 'max(calc(100svh - 72px), 760px)'
+              : 'max(calc(100svh - 72px), 680px)',
+          display: 'flex',
+          flexDirection: 'column',
+          borderRadius: 0,
+          overflow: 'hidden',
+          background: '#020409',
+        }}
+      >
+        <div
+          className="hero-content-shell"
+          style={{
+            position: 'relative',
+            zIndex: 10,
+            width: '100%',
+            minHeight: 'inherit',
+            display: 'flex',
+            alignItems: 'center',
+            paddingTop: 'clamp(3rem, 6vh, 4.5rem)',
+            paddingBottom: 'clamp(5rem, 10vh, 7rem)',
+          }}
+        >
+          <div
+            className="container"
+            style={{
+              width: '100%',
+              maxWidth: 'none',
+              paddingLeft: narrow ? '1rem' : tablet ? '5vw' : 'clamp(2rem, 6vw, 7rem)',
+              paddingRight: narrow ? '1rem' : tablet ? '5vw' : 'clamp(2rem, 6vw, 7rem)',
+            }}
+          >
+            <div className="hero-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: 0, alignItems: 'center' }}>
           {/* Left: Text */}
           <motion.div
+            className="hero-copy"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
+            style={{ maxWidth: '34rem', color: '#f8fafc' }}
           >
             <motion.div variants={itemVariants}>
               <span className="section-label">
@@ -194,22 +141,32 @@ export default function HeroSection() {
             </motion.div>
 
             <motion.h1
+              className="hero-title"
               variants={itemVariants}
-              style={{ fontSize: 'clamp(2.2rem, 5vw, 3.75rem)', fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '1.5rem' }}
+              style={{ fontSize: 'clamp(2.7rem, 5.1vw, 4.25rem)', fontWeight: 300, lineHeight: 1.04, letterSpacing: '-0.045em', marginBottom: '1.75rem', color: '#f8fafc' }}
             >
               Building{' '}
-              <span className="text-gradient">Digital Experiences</span>
+              <span
+                className="text-gradient"
+                style={{
+                  backgroundImage: 'linear-gradient(135deg, #ffffff 0%, #bfdbfe 58%, #38bdf8 100%)',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                Digital Experiences
+              </span>
               {' '}That Drive Results.
             </motion.h1>
 
             <motion.p
+              className="hero-description"
               variants={itemVariants}
-              style={{ fontSize: 'clamp(1rem, 2vw, 1.15rem)', color: 'var(--color-text-secondary)', lineHeight: 1.75, marginBottom: '2.5rem', maxWidth: 520 }}
+              style={{ fontSize: 'clamp(0.98rem, 1.4vw, 1.08rem)', color: 'rgba(226,232,240,0.66)', lineHeight: 1.8, marginBottom: '2.25rem', maxWidth: 520 }}
             >
               I design and develop fast, scalable and modern websites and web applications for businesses, startups and ambitious brands. Every project is built with precision and purpose.
             </motion.p>
 
-            <motion.div className="hero-btns" variants={itemVariants} style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '3rem' }}>
+            <motion.div className="hero-btns" variants={itemVariants} style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '2.25rem' }}>
               <Link
                 to="/contact"
                 style={{
@@ -217,14 +174,15 @@ export default function HeroSection() {
                   alignItems: 'center',
                   gap: '0.5rem',
                   padding: '0.85rem 2rem',
-                  background: 'var(--gradient-primary)',
-                  color: '#fff',
+                  background: '#f8fafc',
+                  color: '#050914',
                   borderRadius: 9999,
-                  fontWeight: 700,
-                  fontSize: '0.95rem',
-                  boxShadow: '0 8px 24px rgba(37,99,235,0.4)',
+                  fontWeight: 600,
+                  fontSize: '0.9rem',
+                  boxShadow: '0 8px 28px rgba(0,0,0,0.22)',
                   transition: 'all 200ms ease',
                   textDecoration: 'none',
+                  border: '1px solid rgba(255,255,255,0.8)',
                 }}
               >
                 Start a Project <ArrowRight size={16} />
@@ -235,15 +193,16 @@ export default function HeroSection() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.5rem',
-                  padding: '0.85rem 2rem',
-                  background: 'transparent',
-                  color: 'var(--color-text-primary)',
-                  border: '1px solid rgba(56,189,248,0.3)',
+                  padding: '0.85rem 1.5rem',
+                  background: 'rgba(255,255,255,0.04)',
+                  color: '#f8fafc',
+                  border: '1px solid rgba(255,255,255,0.18)',
                   borderRadius: 9999,
-                  fontWeight: 600,
-                  fontSize: '0.95rem',
+                  fontWeight: 500,
+                  fontSize: '0.9rem',
                   transition: 'all 200ms ease',
                   textDecoration: 'none',
+                  backdropFilter: 'blur(4px)',
                 }}
               >
                 View My Work <ChevronRight size={16} />
@@ -251,40 +210,102 @@ export default function HeroSection() {
             </motion.div>
 
             {/* Social proof */}
-            <motion.div className="hero-proof" variants={itemVariants} style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+            <motion.div className="hero-proof" variants={itemVariants} style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap', paddingLeft: '0.15rem' }}>
               <div style={{ display: 'flex' }}>
                 {clientIcons.map((ClientIcon, i) => (
-                  <div key={ClientIcon.displayName || i} style={{ width: 32, height: 32, borderRadius: '50%', border: '2px solid var(--color-bg-primary)', background: 'var(--color-bg-card)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-blue-accent)', marginLeft: i > 0 ? -10 : 0 }}>
+                  <div key={ClientIcon.displayName || i} style={{ width: 32, height: 32, borderRadius: '50%', border: '2px solid rgba(2,4,9,0.85)', background: 'rgba(15,23,42,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#7dd3fc', marginLeft: i > 0 ? -10 : 0 }}>
                     <ClientIcon size={14} strokeWidth={2.25} aria-hidden="true" />
                   </div>
                 ))}
               </div>
-              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
-                <span style={{ color: '#fff', fontWeight: 700 }}>20+ clients</span> trust techslot.dev
+              <p style={{ fontSize: '0.85rem', color: 'rgba(226,232,240,0.72)' }}>
+                <span style={{ color: '#f8fafc', fontWeight: 700 }}>20+ clients</span> trust techslot_dev
               </p>
               <div style={{ display: 'flex', gap: 2, color: '#f59e0b' }} aria-label="5 out of 5 stars">
                 {Array.from({ length: 5 }, (_, i) => <Star key={i} size={15} fill="currentColor" aria-hidden="true" />)}
               </div>
             </motion.div>
           </motion.div>
-
-          {/* Right: Visual */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="hero-visual"
-            style={{ display: 'flex', justifyContent: 'center' }}
-          >
-            <TechOrb />
-          </motion.div>
         </div>
       </div>
 
+        </div>
+      </OrbitalHeroSection>
       <style>{`
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.05); opacity: 0.7; }
+        @media (min-width: 768px) and (max-width: 1100px) {
+          .hero-section .hero-grid {
+            grid-template-columns: minmax(0, 55fr) minmax(0, 45fr) !important;
+            text-align: left !important;
+          }
+          .hero-section .hero-copy {
+          width: 100%;
+          max-width: 34rem !important;
+          min-width: 0;
+        }
+        .hero-section .hero-title {
+          font-size: clamp(2.25rem, 4.5vw, 3.25rem) !important;
+        }
+        .hero-section .hero-description {
+          max-width: 100% !important;
+          }
+        .hero-section .hero-btns,
+        .hero-section .hero-proof { justify-content: flex-start !important; }
+        }
+        @media (max-width: 767px) {
+        .hero-section .hero-grid {
+          grid-template-columns: minmax(0, 1fr) !important;
+          text-align: left !important;
+          min-width: 0;
+        }
+        .hero-section .hero-copy {
+          width: 100%;
+          max-width: 42rem !important;
+          min-width: 0;
+        }
+        .hero-section .hero-title {
+          font-size: clamp(2.35rem, 9vw, 3.5rem) !important;
+        }
+        .hero-section .hero-description {
+          max-width: 100% !important;
+        }
+        .hero-section .section-label {
+          max-width: 100%;
+          white-space: normal;
+          font-size: clamp(0.62rem, 2.4vw, 0.875rem);
+          letter-spacing: 0.075em;
+        }
+        .hero-section .hero-btns > a {
+          max-width: 100%;
+        }
+        .hero-section .hero-btns,
+        .hero-section .hero-proof { justify-content: flex-start !important; }
+        }
+        @media (max-width: 640px) {
+        .hero-section {
+          min-height: max(calc(100svh - 72px), 680px) !important;
+          }
+          .hero-section .hero-content-shell {
+            align-items: flex-start !important;
+            padding-top: 2.75rem !important;
+            padding-bottom: 3rem !important;
+          }
+          .hero-section .hero-grid { gap: 0 !important; }
+          .hero-section .hero-title { margin-bottom: 1.5rem !important; }
+          .hero-section .hero-description { margin-bottom: 2rem !important; }
+          .hero-section .hero-btns { margin-bottom: 2rem !important; }
+          .hero-section .hero-proof { row-gap: 0.65rem !important; }
+        }
+        @media (max-width: 380px) {
+          .hero-section .hero-title {
+            font-size: clamp(2.15rem, 10.5vw, 2.6rem) !important;
+          }
+          .hero-section .hero-content-shell {
+            padding-top: 2rem !important;
+            padding-bottom: 2.5rem !important;
+          }
+          .hero-section .section-label {
+            padding: 0.4rem 0.65rem;
+          }
         }
       `}</style>
     </section>

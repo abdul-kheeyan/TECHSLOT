@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Moon, Sun } from 'lucide-react';
 import logoImage from '../assets/TSlogo.png';
 import '../styles/navbar.css';
 
@@ -16,12 +15,11 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [theme, setTheme] = useState(() => localStorage.getItem('techslot-theme') || 'dark');
 
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem('techslot-theme', theme);
-  }, [theme]);
+    document.documentElement.dataset.theme = 'dark';
+    localStorage.removeItem('techslot-theme');
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -42,10 +40,10 @@ export default function Navbar() {
     <>
       <nav className={`navbar ${scrolled ? 'scrolled' : ''}`} role="navigation" aria-label="Main navigation">
         <div className="navbar-inner">
-          <Link to="/" className="navbar-logo" aria-label="techslot.dev Home">
+          <Link to="/" className="navbar-logo" aria-label="techslot_dev Home">
             <img className="navbar-brand-image" src={logoImage} alt="" />
             <span className="navbar-brand-text" aria-hidden="true">
-              <span>techslot</span><span className="navbar-brand-dev">.dev</span>
+              <span>techslot</span><span className="navbar-brand-dev">_dev</span>
             </span>
           </Link>
 
@@ -86,16 +84,6 @@ export default function Navbar() {
               Let's Work Together
             </Link>
           </div>
-
-          <button
-            className="theme-toggle"
-            type="button"
-            onClick={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')}
-            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-          >
-            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
 
           {/* Hamburger */}
           <button
@@ -139,14 +127,6 @@ export default function Navbar() {
                 {link.label}
               </NavLink>
             ))}
-            <button
-              className="theme-toggle mobile-theme-toggle"
-              type="button"
-              onClick={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')}
-            >
-              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-              Switch to {theme === 'dark' ? 'light' : 'dark'} mode
-            </button>
             <div className="mobile-drawer-cta">
               <Link
                 to="/contact"

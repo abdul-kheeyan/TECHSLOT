@@ -317,18 +317,6 @@ input, textarea, select {
   color: var(--color-blue-accent);
 }
 
-/* Technology chips keep their dark surface in light mode, so use white text
-   for a readable contrast before the hover state. */
-:root[data-theme='light'] .tech-tag {
-  color: #ffffff;
-  border-color: rgba(56, 189, 248, 0.3);
-}
-
-:root[data-theme='light'] .tech-tag:hover {
-  color: var(--color-blue-accent);
-  border-color: rgba(56, 189, 248, 0.5);
-}
-
 /* ===== PAGE TRANSITIONS ===== */
 .page-enter {
   opacity: 0;

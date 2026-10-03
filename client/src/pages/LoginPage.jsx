@@ -39,7 +39,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <SEO title="Admin Login" description="Sign in to the techslot.dev admin dashboard." />
+      <SEO title="Admin Login" description="Sign in to the techslot_dev admin dashboard." />
 
       <section style={{ minHeight: 'calc(100vh - var(--navbar-height))', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
         <motion.div
@@ -51,7 +51,7 @@ export default function LoginPage() {
             <Logo size={36} />
             <h1 style={{ fontSize: '1.5rem', fontWeight: 800, marginTop: '1.5rem', marginBottom: '0.5rem' }}>Admin Sign In</h1>
             <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem' }}>
-              Access the techslot.dev management dashboard
+              Access the techslot_dev management dashboard
             </p>
           </div>
 

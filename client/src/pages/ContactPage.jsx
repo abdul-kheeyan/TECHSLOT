@@ -70,7 +70,7 @@ export default function ContactPage() {
     <>
       <SEO
         title="Contact"
-        description="Start your project with techslot.dev. Submit a project inquiry with budget, timeline, and service details."
+        description="Start your project with techslot_dev. Submit a project inquiry with budget, timeline, and service details."
         path="/contact"
       />
 

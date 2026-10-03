@@ -30,9 +30,9 @@ export default function Footer() {
         <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr', gap: '3rem', marginBottom: '3rem' }}>
           {/* Brand col */}
           <div>
-            <Link to="/" className="footer-brand" aria-label="techslot.dev Home">
+            <Link to="/" className="footer-brand" aria-label="techslot_dev Home">
               <img src={logoImage} alt="" className="footer-brand-image" />
-              <span className="footer-brand-text">techslot<span>.dev</span></span>
+              <span className="footer-brand-text">techslot<span>_dev</span></span>
             </Link>
             <p style={{ marginTop: '1rem', color: 'var(--color-text-secondary)', fontSize: '0.9rem', lineHeight: 1.7, maxWidth: '300px' }}>
               Professional websites and software solutions for businesses, startups and ambitious brands. Let's build something great together.
@@ -111,7 +111,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', paddingTop: '2rem', borderTop: '1px solid rgba(56,189,248,0.08)' }}>
           <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-            © {year} techslot.dev. All rights reserved.
+            © {year} techslot_dev. All rights reserved.
           </p>
           <a
             href={GMAIL_COMPOSE_URL}

@@ -52,12 +52,12 @@ const LogoMark = ({ size = 36, className = '' }) => (
 
 export default function Logo({ size = 36, showText = true, className = '' }) {
   return (
-    <Link to="/" className={`navbar-logo ${className}`} aria-label="techslot.dev Home">
+    <Link to="/" className={`navbar-logo ${className}`} aria-label="techslot_dev Home">
       <LogoMark size={size} />
       {showText && (
         <span style={{ fontSize: size < 30 ? '1.1rem' : '1.4rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1 }}>
           <span style={{ color: '#ffffff' }}>techslot</span>
-          <span style={{ background: 'linear-gradient(135deg, #2563eb, #38bdf8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>.dev</span>
+          <span style={{ background: 'linear-gradient(135deg, #2563eb, #38bdf8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>_dev</span>
         </span>
       )}
     </Link>

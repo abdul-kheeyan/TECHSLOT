@@ -50,15 +50,6 @@ select.form-control option { background: var(--color-bg-card); }
 }
 .form-control.error { border-color: rgba(239, 68, 68, 0.5); }
 
-:root[data-theme='light'] .form-control,
-:root[data-theme='light'] .option-selector-item {
-  background: rgba(255, 255, 255, 0.92);
-  border-color: rgba(37, 99, 235, 0.18);
-}
-:root[data-theme='light'] .form-control:focus {
-  background: #ffffff;
-}
-
 .form-grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;

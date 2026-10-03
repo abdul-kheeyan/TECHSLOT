@@ -27,7 +27,7 @@ export default function TestimonialsSection() {
           <span className="section-label">Testimonials</span>
           <h2 className="section-title">What Clients <span className="text-gradient">Say</span></h2>
           <p className="section-subtitle">
-            Real feedback from businesses and founders who trusted techslot.dev with their digital products.
+            Real feedback from businesses and founders who trusted techslot_dev with their digital products.
           </p>
         </motion.div>
 

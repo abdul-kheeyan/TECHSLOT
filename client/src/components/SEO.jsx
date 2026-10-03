@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 export default function SEO({ title, description, path = '' }) {
-  const fullTitle = title ? `${title} | techslot.dev` : 'techslot.dev — Professional Web Development';
+  const fullTitle = title ? `${title} | techslot_dev` : 'techslot_dev — Professional Web Development';
   const desc = description || 'Building digital experiences that drive results. Fast, scalable and modern websites and web applications.';
 
   useEffect(() => {

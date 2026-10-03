@@ -27,10 +27,10 @@ export default function AdminLayout() {
     <div className="admin-layout">
       <aside className="admin-sidebar">
         <div className="admin-sidebar-header">
-          <Link to="/" className="navbar-logo" aria-label="techslot.dev Home">
+          <Link to="/" className="navbar-logo" aria-label="techslot_dev Home">
             <img className="navbar-brand-image" src={logoImage} alt="" />
             <span className="navbar-brand-text" aria-hidden="true">
-              <span>techslot</span><span className="navbar-brand-dev">.dev</span>
+              <span>techslot</span><span className="navbar-brand-dev">_dev</span>
             </span>
           </Link>
           <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: 8 }}>
