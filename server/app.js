@@ -6,6 +6,7 @@ import projectRoutes from './routes/projectRoutes.js';
 import serviceRoutes from './routes/serviceRoutes.js';
 import testimonialRoutes from './routes/testimonialRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
+import chatbotRoutes from './routes/chatbotRoutes.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
 const app = express();
@@ -51,6 +52,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/testimonials', testimonialRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/chatbot', chatbotRoutes);
 
 // Error Handling
 app.use(notFound);
