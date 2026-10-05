@@ -375,8 +375,8 @@
 
 @media (max-width: 767px) {
   .chatbot {
-    right: env(safe-area-inset-right, 0px);
-    bottom: calc(18px + env(safe-area-inset-bottom, 0px) + var(--chatbot-visual-bottom-inset, 0px));
+    right: calc(10px + env(safe-area-inset-right, 0px));
+    bottom: calc(32px + env(safe-area-inset-bottom, 0px) + var(--chatbot-visual-bottom-inset, 0px));
   }
 
   .chatbot-panel {
