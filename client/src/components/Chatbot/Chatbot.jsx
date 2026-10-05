@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bot, MessageCircle, Send, X } from 'lucide-react';
@@ -58,20 +59,49 @@ export default function Chatbot() {
   const [geometry, setGeometry] = useState(null);
 
   useEffect(() => {
+    const updateVisualViewport = () => {
+      const viewport = window.visualViewport;
+      const visibleHeight = viewport?.height ?? window.innerHeight;
+      const visibleTop = viewport?.offsetTop ?? 0;
+      const bottomInset = Math.max(0, window.innerHeight - visibleTop - visibleHeight);
+      const rootStyle = document.documentElement.style;
+
+      rootStyle.setProperty('--chatbot-visual-height', `${visibleHeight}px`);
+      rootStyle.setProperty('--chatbot-visual-bottom-inset', `${bottomInset}px`);
+    };
+
+    updateVisualViewport();
+    window.addEventListener('resize', updateVisualViewport);
+    window.visualViewport?.addEventListener('resize', updateVisualViewport);
+    window.visualViewport?.addEventListener('scroll', updateVisualViewport);
+
+    return () => {
+      window.removeEventListener('resize', updateVisualViewport);
+      window.visualViewport?.removeEventListener('resize', updateVisualViewport);
+      window.visualViewport?.removeEventListener('scroll', updateVisualViewport);
+      document.documentElement.style.removeProperty('--chatbot-visual-height');
+      document.documentElement.style.removeProperty('--chatbot-visual-bottom-inset');
+    };
+  }, []);
+
+  useEffect(() => {
     if (isOpen) messagesEndRef.current?.scrollIntoView({ block: 'end' });
   }, [isOpen, messages, loading, error]);
 
   useEffect(() => {
     const fitPanel = () => {
+      if (window.innerWidth < 768) {
+        geometryRef.current = null;
+        setGeometry(null);
+        return;
+      }
+
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
-      const mobile = viewportWidth <= 640;
       const current = geometryRef.current;
-      const maxWidth = Math.max(1, (mobile ? viewportWidth : viewportWidth - 24) - (mobile ? 16 : 0));
-      const maxHeight = Math.max(1, viewportHeight - (mobile ? 112 : 120));
-      const width = mobile
-        ? maxWidth
-        : clamp(current?.width ?? 390, Math.min(320, maxWidth), Math.min(560, maxWidth));
+      const maxWidth = Math.max(1, viewportWidth - 24);
+      const maxHeight = Math.max(1, viewportHeight - 120);
+      const width = clamp(current?.width ?? 390, Math.min(320, maxWidth), Math.min(560, maxWidth));
       const height = clamp(
         current?.height ?? 590,
         Math.min(360, maxHeight),
@@ -85,7 +115,7 @@ export default function Chatbot() {
           : Math.max(8, viewportWidth - width - 24),
         top: current
           ? clamp(current.top, 8, Math.max(8, viewportHeight - height - 8))
-          : Math.max(8, viewportHeight - height - (mobile ? 88 : 96)),
+          : Math.max(8, viewportHeight - height - 96),
       };
       geometryRef.current = next;
       setGeometry(next);
@@ -102,7 +132,7 @@ export default function Chatbot() {
   const resizePanel = (event, edges) => {
     event.preventDefault();
     event.stopPropagation();
-    if (window.innerWidth <= 640 || !geometryRef.current) return;
+    if (window.innerWidth < 768 || !geometryRef.current) return;
 
     const startX = event.clientX;
     const startY = event.clientY;
@@ -189,7 +219,7 @@ export default function Chatbot() {
     }
   };
 
-  return (
+  return createPortal(
     <div className="chatbot">
       <AnimatePresence>
         {isOpen && (
@@ -321,6 +351,7 @@ export default function Chatbot() {
       >
         {isOpen ? <X size={23} /> : <MessageCircle size={23} />}
       </button>
-    </div>
+    </div>,
+    document.body
   );
 }
