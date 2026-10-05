@@ -375,12 +375,12 @@
 
 @media (max-width: 767px) {
   .chatbot {
-    right: calc(6px + env(safe-area-inset-right, 0px));
+    right: env(safe-area-inset-right, 0px);
     bottom: calc(18px + env(safe-area-inset-bottom, 0px) + var(--chatbot-visual-bottom-inset, 0px));
   }
 
   .chatbot-panel {
-    right: calc(6px + env(safe-area-inset-right, 0px));
+    right: calc(4px + env(safe-area-inset-right, 0px));
     bottom: calc(54px + 36px + env(safe-area-inset-bottom, 0px) + var(--chatbot-visual-bottom-inset, 0px));
     width: min(92vw, 420px);
     height: min(75vh, 700px);
