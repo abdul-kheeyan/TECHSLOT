@@ -1,6 +1,6 @@
 .chatbot {
   position: fixed;
-  right: calc(1.5rem + env(safe-area-inset-right, 0px));
+  right: calc(2.3rem + env(safe-area-inset-right, 0px));
   bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
   z-index: 1001;
   font-family: var(--font-sans);
