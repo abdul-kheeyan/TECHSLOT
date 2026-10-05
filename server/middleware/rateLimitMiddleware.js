@@ -23,6 +23,25 @@ export const chatbotRateLimiter = rateLimit({
   },
 });
 
+export const chatbotLeadRateLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 3,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req) => {
+    const context = req.body?.context;
+    const message = typeof req.body?.message === 'string' ? req.body.message.trim().toLowerCase() : '';
+    const normalizedMessage = message.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+    return context?.pendingAction?.type !== 'lead'
+      || context.pendingAction.step !== 'confirm'
+      || !['yes', 'yeah', 'yep', 'sure', 'ok', 'okay', 'haan', 'han', 'ji', 'bilkul', 'theek hai', 'kar do', 'send it'].includes(normalizedMessage);
+  },
+  message: {
+    success: false,
+    message: 'You have reached the limit of 3 chat inquiries per hour. Please try again later.',
+  },
+});
+
 // Rate limiter for authentication login attempts
 export const authRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

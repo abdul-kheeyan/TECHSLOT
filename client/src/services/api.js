@@ -97,8 +97,8 @@ export const deleteTestimonial = (id) =>
 export const submitContact = (data) =>
   api.post('/contact', data);
 
-export const askChatbot = (message) =>
-  api.post('/chatbot', { message });
+export const askChatbot = (message, context) =>
+  api.post('/chatbot', { message, context });
 
 export const getContacts = (params) =>
   api.get('/contact', { params });

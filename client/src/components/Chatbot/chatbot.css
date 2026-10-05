@@ -147,6 +147,10 @@
   overflow-wrap: anywhere;
 }
 
+.chatbot-message p {
+  white-space: pre-line;
+}
+
 .chatbot-message.assistant {
   background: var(--color-bg-card);
   border-bottom-left-radius: var(--radius-sm);

@@ -6,51 +6,21 @@ import { Bot, MessageCircle, Send, X } from 'lucide-react';
 import { askChatbot } from '../../services/api';
 import './chatbot.css';
 
-const initialQuickReplies = [
-  'What services do you offer?',
-  'How does the project process work?',
-  'What are your pricing plans?',
-  'How can I start a project?',
-];
-
 const initialMessage = {
   id: 0,
   role: 'assistant',
   content: 'Hi! How can I help you?',
-  quickReplies: initialQuickReplies,
-};
-
-const followUpQuickReplies = (question, answer, contactCta) => {
-  if (contactCta) return ['What services do you offer?', 'How can I start a project?'];
-
-  const topic = `${question} ${answer}`.toLowerCase();
-  if (topic.includes('pricing') || topic.includes('price') || topic.includes('quote') || topic.includes('budget')) {
-    return ['What budget ranges can I select?', 'How can I start a project?'];
-  }
-  if (topic.includes('timeline') || topic.includes('delivery') || topic.includes('weeks')) {
-    return ['How does the project process work?', 'How can I start a project?'];
-  }
-  if (topic.includes('maintenance') || topic.includes('support')) {
-    return ['What services do you offer?', 'How can I start a project?'];
-  }
-  if (topic.includes('process') || topic.includes('discovery') || topic.includes('planning')) {
-    return ['What services do you offer?', 'What technologies do you use?'];
-  }
-  if (topic.includes('technolog') || topic.includes('stack') || topic.includes('react') || topic.includes('mongodb')) {
-    return ['What services do you offer?', 'How does the project process work?'];
-  }
-  if (topic.includes('contact form') || topic.includes('start a project')) {
-    return ['What services do you offer?', 'What are your pricing plans?'];
-  }
-  return ['How does the project process work?', 'What are your pricing plans?'];
+  quickReplies: [],
 };
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+const wait = (duration) => new Promise((resolve) => window.setTimeout(resolve, duration));
 
 export default function Chatbot() {
   const messagesEndRef = useRef(null);
   const messageIdRef = useRef(0);
   const geometryRef = useRef(null);
+  const contextRef = useRef({});
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([initialMessage]);
   const [draft, setDraft] = useState('');
@@ -198,17 +168,29 @@ export default function Chatbot() {
     setLoading(true);
 
     try {
-      const { data } = await askChatbot(message);
-      setMessages((current) => [
-        ...current,
-        {
-          id: ++messageIdRef.current,
-          role: 'assistant',
-          content: data.data.answer,
-          contactCta: data.data.contactCta,
-          quickReplies: followUpQuickReplies(message, data.data.answer, data.data.contactCta),
-        },
-      ]);
+      const { data } = await askChatbot(message, contextRef.current);
+      const result = data.data;
+      contextRef.current = result.context || {};
+      const answers = Array.isArray(result.answers)
+        ? result.answers
+        : [{ answer: result.answer, contactCta: result.contactCta, links: [] }];
+      for (let index = 0; index < answers.length; index += 1) {
+        if (index > 0) await wait(350);
+        const answer = answers[index];
+        setMessages((current) => [
+          ...current,
+          {
+            id: ++messageIdRef.current,
+            role: 'assistant',
+            content: answer.answer,
+            contactCta: answer.contactCta,
+            links: answer.links || [],
+            quickReplies: index === answers.length - 1
+              ? (result.suggestions || []).map((suggestion) => suggestion.text)
+              : [],
+          },
+        ]);
+      }
     } catch (requestError) {
       setError(
         requestError.response?.data?.message
@@ -264,12 +246,32 @@ export default function Chatbot() {
                     )}
                     <div className={`chatbot-message ${message.role}`}>
                       <p>{message.content}</p>
-                      {message.contactCta && (
-                        <Link
-                          className="chatbot-contact-link"
-                          to="/contact"
-                          onClick={() => setIsOpen(false)}
-                        >
+                      {message.links?.map((link) => link.url.startsWith('/') && !link.url.startsWith('//')
+                        ? (
+                          <Link
+                            className="chatbot-contact-link"
+                            key={`${link.url}-${link.label}`}
+                            to={link.url}
+                            onClick={() => setIsOpen(false)}
+                          >
+                            {link.label}
+                          </Link>
+                        )
+                        : /^https?:\/\//i.test(link.url)
+                          ? (
+                          <a
+                            className="chatbot-contact-link"
+                            href={link.url}
+                            key={`${link.url}-${link.label}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {link.label}
+                          </a>
+                          )
+                          : null)}
+                      {message.contactCta && !message.links?.some((link) => link.url === '/contact') && (
+                        <Link className="chatbot-contact-link" to="/contact" onClick={() => setIsOpen(false)}>
                           Go to the contact form
                         </Link>
                       )}
