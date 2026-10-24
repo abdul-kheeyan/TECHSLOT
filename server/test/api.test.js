@@ -112,11 +112,25 @@ test('secures setup, validates contacts, and paginates public projects and admin
   const settingsResponse = await fetch(`${baseUrl}/portfolio-settings`);
   const settingsBody = await settingsResponse.json();
   assert.equal(settingsResponse.status, 200);
-  assert.deepEqual(settingsBody.data, { instagramReelUrl: '' });
+  assert.deepEqual(settingsBody.data, { instagramReels: [], instagramReelUrl: '' });
   assert.match(
     settingsResponse.headers.get('content-security-policy'),
     /frame-src 'self' https:\/\/www\.instagram\.com/
   );
+  assert.match(
+    settingsResponse.headers.get('content-security-policy'),
+    /script-src 'self' https:\/\/www\.instagram\.com/
+  );
+
+  await PortfolioSettings.create({
+    key: 'portfolio',
+    instagramReelUrl: 'https://www.instagram.com/reel/LEGACY123/',
+  });
+  const legacySettingsResponse = await fetch(`${baseUrl}/portfolio-settings`);
+  const legacySettingsBody = await legacySettingsResponse.json();
+  assert.deepEqual(legacySettingsBody.data.instagramReels, [
+    'https://www.instagram.com/reel/LEGACY123/',
+  ]);
 
   const unauthorizedSettingsResponse = await fetch(`${baseUrl}/portfolio-settings/instagram-reel`, {
     method: 'PUT',
@@ -146,11 +160,46 @@ test('secures setup, validates contacts, and paginates public projects and admin
   const savedReelBody = await saveReelResponse.json();
   assert.equal(saveReelResponse.status, 200);
   assert.equal(savedReelBody.data.instagramReelUrl, 'https://www.instagram.com/reel/ABC123/');
+  assert.deepEqual(savedReelBody.data.instagramReels, ['https://www.instagram.com/reel/ABC123/']);
   assert.equal(await PortfolioSettings.countDocuments(), 1);
+
+  const saveReelsResponse = await fetch(`${baseUrl}/portfolio-settings/instagram-reels`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${loginBody.data.token}`,
+    },
+    body: JSON.stringify({
+      instagramReels: [
+        'https://www.instagram.com/reel/ABC123/?utm_source=share',
+        'https://instagram.com/reel/DEF456/',
+        'https://www.instagram.com/reel/ABC123/',
+      ],
+    }),
+  });
+  const savedReelsBody = await saveReelsResponse.json();
+  assert.equal(saveReelsResponse.status, 200);
+  assert.deepEqual(savedReelsBody.data.instagramReels, [
+    'https://www.instagram.com/reel/ABC123/',
+    'https://www.instagram.com/reel/DEF456/',
+  ]);
+
+  const invalidReelsResponse = await fetch(`${baseUrl}/portfolio-settings/instagram-reels`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${loginBody.data.token}`,
+    },
+    body: JSON.stringify({ instagramReels: ['https://example.com/reel/ABC123/'] }),
+  });
+  assert.equal(invalidReelsResponse.status, 400);
 
   const savedSettingsResponse = await fetch(`${baseUrl}/portfolio-settings`);
   const savedSettingsBody = await savedSettingsResponse.json();
-  assert.equal(savedSettingsBody.data.instagramReelUrl, 'https://www.instagram.com/reel/ABC123/');
+  assert.deepEqual(savedSettingsBody.data.instagramReels, [
+    'https://www.instagram.com/reel/ABC123/',
+    'https://www.instagram.com/reel/DEF456/',
+  ]);
 
   await Contact.insertMany(
     Array.from({ length: 25 }, (_, index) => ({

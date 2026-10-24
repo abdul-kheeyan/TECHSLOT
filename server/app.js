@@ -18,6 +18,7 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         frameSrc: ["'self'", 'https://www.instagram.com'],
+        scriptSrc: ["'self'", 'https://www.instagram.com'],
       },
     },
   })

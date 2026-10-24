@@ -98,8 +98,8 @@ export const deleteTestimonial = (id) =>
 export const getPortfolioSettings = () =>
   api.get('/portfolio-settings');
 
-export const updateInstagramReel = (instagramReelUrl) =>
-  api.put('/portfolio-settings/instagram-reel', { instagramReelUrl });
+export const updateInstagramReels = (instagramReels) =>
+  api.put('/portfolio-settings/instagram-reels', { instagramReels });
 
 // ===== CONTACT =====
 export const submitContact = (data) =>

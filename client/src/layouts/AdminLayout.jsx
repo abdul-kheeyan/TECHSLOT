@@ -1,6 +1,6 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import {
-  LayoutDashboard, FolderOpen, Briefcase, MessageSquare, Mail, LogOut,
+  LayoutDashboard, FolderOpen, Briefcase, MessageSquare, Mail, LogOut, Camera,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import logoImage from '../assets/TSlogo.png';
@@ -9,6 +9,7 @@ import '../styles/admin.css';
 const navItems = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
   { id: 'projects', label: 'Projects', icon: FolderOpen },
+  { id: 'reels', label: 'Instagram Reels', icon: Camera },
   { id: 'services', label: 'Services', icon: Briefcase },
   { id: 'testimonials', label: 'Testimonials', icon: MessageSquare },
   { id: 'inquiries', label: 'Inquiries', icon: Mail },
@@ -22,6 +23,24 @@ export default function AdminLayout() {
     logout();
     navigate('/login');
   };
+
+  const renderNavigation = (className = 'admin-nav') => (
+    <nav className={className} aria-label="Admin navigation">
+      {navItems.map(({ id, label, icon: Icon }) => (
+        <button
+          key={id}
+          className="admin-nav-item"
+          onClick={() => {
+            const el = document.getElementById(`admin-${id}`);
+            el?.scrollIntoView({ behavior: 'smooth' });
+          }}
+        >
+          <Icon size={18} />
+          {label}
+        </button>
+      ))}
+    </nav>
+  );
 
   return (
     <div className="admin-layout">
@@ -38,21 +57,7 @@ export default function AdminLayout() {
           </p>
         </div>
 
-        <nav className="admin-nav" aria-label="Admin navigation">
-          {navItems.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              className="admin-nav-item"
-              onClick={() => {
-                const el = document.getElementById(`admin-${id}`);
-                el?.scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
-              <Icon size={18} />
-              {label}
-            </button>
-          ))}
-        </nav>
+        {renderNavigation()}
 
         <div style={{ padding: '1rem', borderTop: '1px solid rgba(56,189,248,0.08)' }}>
           <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: 8, padding: '0 0.5rem' }}>
@@ -66,6 +71,7 @@ export default function AdminLayout() {
       </aside>
 
       <main className="admin-main">
+        {renderNavigation('admin-mobile-nav')}
         <Outlet />
       </main>
     </div>

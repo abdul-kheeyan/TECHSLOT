@@ -105,30 +105,62 @@
   padding-top: 0;
 }
 
+.instagram-reel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: var(--space-6);
+  align-items: start;
+}
+
 .instagram-reel-card {
-  width: min(100%, 420px);
-  margin: 0 auto;
-  padding: var(--space-3);
+  min-width: 0;
+  overflow: hidden;
   background: var(--color-bg-card);
   border: var(--border-card);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-blue-sm);
 }
 
-.instagram-reel-card iframe {
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  border: 0;
-  border-radius: var(--radius-md);
-  background: var(--color-bg-primary);
+.instagram-reel-card .instagram-media {
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0 !important;
+  background: var(--color-bg-card) !important;
+  box-shadow: none !important;
 }
 
-.instagram-reel-card a {
+.instagram-reel-card .instagram-media > a {
+  display: flex;
+  min-height: 280px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  color: var(--color-text-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  text-align: center;
+}
+
+.instagram-reel-fallback-icon {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: var(--radius-full);
+  background: rgba(56, 189, 248, 0.1);
+  color: var(--color-blue-accent);
+}
+
+.instagram-reel-open {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  margin: var(--space-3) var(--space-1) var(--space-1);
+  gap: var(--space-2);
+  margin: var(--space-3) var(--space-4);
   color: var(--color-blue-accent);
   font-size: var(--text-sm);
   font-weight: var(--font-semibold);
@@ -178,4 +210,5 @@
 
 @media (max-width: 768px) {
   .service-detail-grid { grid-template-columns: 1fr !important; }
+  .instagram-reel-grid { grid-template-columns: minmax(0, 1fr); }
 }

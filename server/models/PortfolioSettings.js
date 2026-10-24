@@ -12,6 +12,10 @@ const portfolioSettingsSchema = new mongoose.Schema(
       default: '',
       trim: true,
     },
+    instagramReels: {
+      type: [String],
+      default: [],
+    },
   },
   {
     timestamps: true,
