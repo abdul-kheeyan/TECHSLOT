@@ -63,6 +63,10 @@ export default function InstagramReelSection() {
 
   if (loading || (!error && !reels.length)) return null;
 
+  const radius = reels.length > 1
+    ? `${(368 / (2 * Math.sin(Math.PI / reels.length))).toFixed(2)}px`
+    : '0px';
+
   return (
     <section className="section instagram-reel-section">
       <div className="container">
@@ -79,30 +83,44 @@ export default function InstagramReelSection() {
             Instagram Reels could not be loaded right now. Please try again later.
           </p>
         ) : (
-          <div className="instagram-reel-grid">
-            {reels.map((reelUrl, index) => (
-              <article className="instagram-reel-card" key={reelUrl}>
-                <blockquote
-                  className="instagram-media"
-                  data-instgrm-permalink={reelUrl}
-                  data-instgrm-version="14"
+          <div className="instagram-reel-carousel">
+            <div
+              className={`instagram-reel-orbit${reels.length === 1 ? ' is-static' : ''}`}
+              style={{
+                '--reel-radius': radius,
+                '--reel-duration': `${reels.length * 8}s`,
+              }}
+            >
+              {reels.map((reelUrl, index) => (
+                <article
+                  className="instagram-reel-card"
+                  key={reelUrl}
+                  style={{
+                    '--reel-angle': `${(index * 360) / reels.length}deg`,
+                  }}
                 >
-                  <a href={reelUrl} target="_blank" rel="noopener noreferrer">
-                    <span className="instagram-reel-fallback-icon"><Camera size={28} /></span>
-                    <span>Watch Reel {index + 1} on Instagram</span>
-                    <ExternalLink size={14} />
+                  <blockquote
+                    className="instagram-media"
+                    data-instgrm-permalink={reelUrl}
+                    data-instgrm-version="14"
+                  >
+                    <a href={reelUrl} target="_blank" rel="noopener noreferrer">
+                      <span className="instagram-reel-fallback-icon"><Camera size={28} /></span>
+                      <span>Watch Reel {index + 1} on Instagram</span>
+                      <ExternalLink size={14} />
+                    </a>
+                  </blockquote>
+                  <a
+                    className="instagram-reel-open"
+                    href={reelUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open on Instagram <ExternalLink size={14} />
                   </a>
-                </blockquote>
-                <a
-                  className="instagram-reel-open"
-                  href={reelUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Open on Instagram <ExternalLink size={14} />
-                </a>
-              </article>
-            ))}
+                </article>
+              ))}
+            </div>
           </div>
         )}
       </div>

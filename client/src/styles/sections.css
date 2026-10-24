@@ -1,7 +1,7 @@
 /* ===== STATS ===== */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-6);
 }
 
@@ -38,7 +38,7 @@
 /* ===== PROCESS TIMELINE ===== */
 .process-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-6);
 }
 
@@ -72,7 +72,7 @@
 /* ===== TESTIMONIALS ===== */
 .testimonial-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-6);
 }
 
@@ -105,20 +105,50 @@
   padding-top: 0;
 }
 
-.instagram-reel-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
-  gap: var(--space-6);
-  align-items: start;
+.instagram-reel-carousel {
+  position: relative;
+  height: 620px;
+  overflow: hidden;
+  perspective: 1200px;
+  perspective-origin: 50% 42%;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.instagram-reel-orbit {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  animation: instagram-reel-orbit var(--reel-duration) linear infinite;
+}
+
+.instagram-reel-orbit:hover,
+.instagram-reel-orbit:focus-within {
+  animation-play-state: paused;
+}
+
+.instagram-reel-orbit.is-static {
+  animation: none;
+}
+
+@keyframes instagram-reel-orbit {
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(360deg); }
 }
 
 .instagram-reel-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(320px, calc(100vw - 48px));
   min-width: 0;
   overflow: hidden;
   background: var(--color-bg-card);
   border: var(--border-card);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-blue-sm);
+  backface-visibility: hidden;
+  transform: translate(-50%, -50%) rotateY(var(--reel-angle)) translateZ(var(--reel-radius));
 }
 
 .instagram-reel-card .instagram-media {
@@ -129,6 +159,10 @@
   border-radius: var(--radius-xl) var(--radius-xl) 0 0 !important;
   background: var(--color-bg-card) !important;
   box-shadow: none !important;
+}
+
+.instagram-reel-card .instagram-media iframe {
+  max-width: 100% !important;
 }
 
 .instagram-reel-card .instagram-media > a {
@@ -210,5 +244,9 @@
 
 @media (max-width: 768px) {
   .service-detail-grid { grid-template-columns: 1fr !important; }
-  .instagram-reel-grid { grid-template-columns: minmax(0, 1fr); }
+  .instagram-reel-carousel { height: 580px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .instagram-reel-orbit { animation-play-state: paused; }
 }

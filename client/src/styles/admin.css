@@ -303,12 +303,13 @@
 
 .admin-metrics {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--space-4);
   margin-bottom: var(--space-8);
 }
 
 .admin-metric-card {
+  min-width: 0;
   padding: var(--space-6);
   background: var(--color-bg-card);
   border: var(--border-card);
@@ -331,11 +332,12 @@
   background: var(--color-bg-card);
   border: var(--border-card);
   border-radius: var(--radius-xl);
-  overflow: hidden;
+  overflow-x: auto;
 }
 
 .admin-table {
   width: 100%;
+  min-width: 640px;
   border-collapse: collapse;
   font-size: var(--text-sm);
 }
@@ -435,12 +437,8 @@
 }
 
 @media (max-width: 1024px) {
-  .admin-metrics { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 768px) {
   .admin-sidebar { display: none; }
-  .admin-main { margin-left: 0; padding: var(--space-4); }
+  .admin-main { margin-left: 0; }
   .admin-mobile-nav {
     position: sticky;
     top: var(--space-2);
@@ -462,13 +460,17 @@
     font-size: var(--text-xs);
   }
   .admin-mobile-nav .admin-nav-item svg { width: 15px; height: 15px; }
+  .admin-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 768px) {
+  .admin-main { padding: var(--space-4); }
   .admin-page-heading { align-items: flex-start; padding: var(--space-5); }
   .admin-content-section { padding: var(--space-4); }
   .admin-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .admin-metric-card { padding: var(--space-4); }
   .instagram-reel-entry { align-items: stretch; flex-direction: column; }
   .instagram-reel-save { align-items: flex-start; flex-direction: column; }
-  .admin-table-wrap { overflow-x: auto; }
   .admin-pagination { justify-content: center; flex-wrap: wrap; }
 }
 

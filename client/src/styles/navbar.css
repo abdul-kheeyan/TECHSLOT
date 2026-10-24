@@ -114,6 +114,9 @@
   top: var(--navbar-height);
   left: 0;
   right: 0;
+  max-height: calc(100dvh - var(--navbar-height));
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--color-bg-secondary);
   border-bottom: var(--border-glass);
   z-index: 999;
@@ -141,7 +144,7 @@
   color: var(--color-blue-accent);
 }
 .mobile-drawer-cta { margin-top: var(--space-4); padding-top: var(--space-4); border-top: var(--border-card); }
-@media (max-width: 768px) {
+@media (max-width: 960px) {
   .hamburger { display: flex; }
   .navbar-nav, .navbar-cta { display: none !important; }
   .navbar-brand-image { height: 32px; }
