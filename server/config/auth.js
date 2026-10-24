@@ -1,10 +1,10 @@
-const developmentFallbackSecret = 'techslot_development_only_jwt_secret';
-
 export const getJwtSecret = () => {
   const secret = process.env.JWT_SECRET;
-  if (secret) return secret;
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('JWT_SECRET must be configured in production.');
+  if (!secret || secret.length < 32 || new Set(secret).size < 12) {
+    throw new Error('JWT_SECRET must contain at least 32 characters of varied random data.');
   }
-  return developmentFallbackSecret;
+  if (/change_in_production|replace_with|example|development_only/i.test(secret)) {
+    throw new Error('JWT_SECRET must not use a placeholder value.');
+  }
+  return secret;
 };

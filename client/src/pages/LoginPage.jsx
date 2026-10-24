@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, Mail } from 'lucide-react';
 import SEO from '../components/SEO';
@@ -19,8 +19,7 @@ export default function LoginPage() {
   const from = location.state?.from?.pathname || '/admin';
 
   if (user) {
-    navigate(from, { replace: true });
-    return null;
+    return <Navigate to={user.role === 'admin' ? from : '/'} replace />;
   }
 
   const handleSubmit = async (e) => {
@@ -63,10 +62,11 @@ export default function LoginPage() {
             )}
 
             <div className="form-group" style={{ marginBottom: '1rem' }}>
-              <label className="form-label">Email</label>
+              <label className="form-label" htmlFor="login-email">Email</label>
               <div style={{ position: 'relative' }}>
                 <Mail size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} />
                 <input
+                  id="login-email"
                   type="email"
                   className="form-control"
                   style={{ paddingLeft: 40 }}
@@ -79,10 +79,11 @@ export default function LoginPage() {
             </div>
 
             <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-              <label className="form-label">Password</label>
+              <label className="form-label" htmlFor="login-password">Password</label>
               <div style={{ position: 'relative' }}>
                 <Lock size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} />
                 <input
+                  id="login-password"
                   type="password"
                   className="form-control"
                   style={{ paddingLeft: 40 }}

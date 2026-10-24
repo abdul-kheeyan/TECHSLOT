@@ -1,6 +1,4 @@
-﻿import 'dotenv/config';
-import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
+import 'dotenv/config';
 import connectDB from '../config/db.js';
 import User from '../models/User.js';
 import Project from '../models/Project.js';
@@ -314,15 +312,17 @@ const testimonials = [
   },
 ];
 
-const adminUser = {
-  name: 'Admin',
-  email: 'admin@techslot.dev',
-  password: 'Admin@TechSlot2025!',
-  role: 'admin',
-};
-
 const seedDB = async () => {
   try {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('The destructive sample seeder cannot run in production.');
+    }
+
+    const { SEED_ADMIN_NAME, SEED_ADMIN_EMAIL, SEED_ADMIN_PASSWORD } = process.env;
+    if (!SEED_ADMIN_NAME || !SEED_ADMIN_EMAIL || !SEED_ADMIN_PASSWORD || SEED_ADMIN_PASSWORD.length < 12) {
+      throw new Error('Set SEED_ADMIN_NAME, SEED_ADMIN_EMAIL, and a SEED_ADMIN_PASSWORD of at least 12 characters.');
+    }
+
     await connectDB();
 
     console.log('\n[Seeder] Starting database seeding...');
@@ -337,7 +337,12 @@ const seedDB = async () => {
     console.log('[Seeder] Cleared existing data.');
 
     // Create Admin User
-    const createdAdmin = await User.create(adminUser);
+    const createdAdmin = await User.create({
+      name: SEED_ADMIN_NAME,
+      email: SEED_ADMIN_EMAIL,
+      password: SEED_ADMIN_PASSWORD,
+      role: 'admin',
+    });
     console.log(`[Seeder] Admin user created: ${createdAdmin.email}`);
 
     // Seed Projects
@@ -354,11 +359,6 @@ const seedDB = async () => {
 
     console.log('\n[Seeder] Database seeding complete!');
     console.log('--------------------------------------');
-    console.log('Admin Login Credentials:');
-    console.log('  Email:    admin@techslot.dev');
-    console.log('  Password: Admin@TechSlot2025!');
-    console.log('--------------------------------------\n');
-
     process.exit(0);
   } catch (error) {
     console.error(`[Seeder] Error: ${error.message}`);

@@ -27,7 +27,7 @@ export default function Footer() {
   return (
     <footer style={{ background: 'var(--color-bg-secondary)', borderTop: '1px solid rgba(56,189,248,0.08)', marginTop: 'auto' }}>
       <div className="container" style={{ padding: '4rem 1.5rem 2rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr', gap: '3rem', marginBottom: '3rem' }}>
+        <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr', gap: '3rem', marginBottom: '3rem' }}>
           {/* Brand col */}
           <div>
             <Link to="/" className="footer-brand" aria-label="techslot_dev Home">
@@ -129,8 +129,9 @@ export default function Footer() {
 
       <style>{`
         @media (max-width: 768px) {
-          footer > div > div:first-child > div:first-child {
+          .footer-grid {
             grid-template-columns: 1fr !important;
+            gap: 2rem !important;
           }
         }
       `}</style>

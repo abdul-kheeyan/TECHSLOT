@@ -9,6 +9,8 @@
     "dev": "node --watch server.js",
     "test": "node --test",
     "seed": "node utils/seeder.js",
+    "provision:admin": "node utils/provisionAdmin.js",
+    "admin:password": "node utils/rotateAdminPassword.js",
     "sync:portfolio": "node utils/syncPortfolioProjects.js"
   },
   "author": "techslot.dev",

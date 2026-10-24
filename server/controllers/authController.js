@@ -6,16 +6,23 @@ import generateToken from '../utils/generateToken.js';
 // @access  Public
 export const loginUser = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body || {};
 
-    if (!email || !password) {
+    if (
+      typeof email !== 'string'
+      || typeof password !== 'string'
+      || !email.trim()
+      || !password
+      || email.length > 254
+      || password.length > 128
+    ) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide both email and password.',
+        message: 'Please provide a valid email and password.',
       });
     }
 
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const user = await User.findOne({ email: email.trim().toLowerCase() });
 
     if (user && (await user.matchPassword(password))) {
       return res.status(200).json({
@@ -63,60 +70,6 @@ export const getUserProfile = async (req, res, next) => {
         message: 'User profile not found.',
       });
     }
-  } catch (error) {
-    next(error);
-  }
-};
-
-// @desc    Seed or Register Initial Admin
-// @route   POST /api/auth/setup-admin
-// @access  Public (only works if zero users exist)
-export const setupAdmin = async (req, res, next) => {
-  try {
-    // Production admins are provisioned with the seed script. Keeping this
-    // bootstrap route out of production prevents an anonymous first request
-    // from claiming the administrator role on an empty database.
-    if (process.env.NODE_ENV === 'production') {
-      return res.status(404).json({
-        success: false,
-        message: 'Route not found.',
-      });
-    }
-
-    const userCount = await User.countDocuments({});
-    if (userCount > 0) {
-      return res.status(403).json({
-        success: false,
-        message: 'Admin account is already initialized. Use /api/auth/login.',
-      });
-    }
-
-    const { name, email, password } = req.body;
-    if (!name || !email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide name, email, and password for admin account.',
-      });
-    }
-
-    const user = await User.create({
-      name,
-      email: email.toLowerCase(),
-      password,
-      role: 'admin',
-    });
-
-    res.status(201).json({
-      success: true,
-      message: 'Admin account created successfully.',
-      data: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        token: generateToken(user._id),
-      },
-    });
   } catch (error) {
     next(error);
   }

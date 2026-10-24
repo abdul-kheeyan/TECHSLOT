@@ -34,6 +34,8 @@ export default function AdminDashboardPage() {
   const [testimonials, setTestimonials] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [contactFilter, setContactFilter] = useState('all');
+  const [contactPage, setContactPage] = useState(1);
+  const [contactPagination, setContactPagination] = useState({ page: 1, pages: 0, total: 0 });
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState({ type: null, item: null });
   const [form, setForm] = useState({});
@@ -45,8 +47,14 @@ export default function AdminDashboardPage() {
   const loadAll = useCallback(async () => {
     setLoading(true);
     try {
-      const [p, s, t, c] = await Promise.all([
-        getProjects(), getServices(), getTestimonials(), getContacts(),
+      const [p, s, t, c, allContacts] = await Promise.all([
+        getProjects({ limit: 100 }), getServices(), getTestimonials(),
+        getContacts({
+          page: contactPage,
+          limit: 20,
+          ...(contactFilter !== 'all' ? { status: contactFilter } : {}),
+        }),
+        getContacts({ page: 1, limit: 1 }),
       ]);
       const proj = p.data.data || [];
       const serv = s.data.data || [];
@@ -56,13 +64,19 @@ export default function AdminDashboardPage() {
       setServices(serv);
       setTestimonials(test);
       setContacts(cont);
-      setMetrics({ projects: proj.length, services: serv.length, testimonials: test.length, inquiries: cont.length });
+      setContactPagination(c.data.pagination || { page: contactPage, pages: 0, total: cont.length });
+      setMetrics({
+        projects: p.data.pagination?.total ?? proj.length,
+        services: serv.length,
+        testimonials: test.length,
+        inquiries: allContacts.data.pagination?.total ?? cont.length,
+      });
     } catch {
       notify('Failed to load dashboard data', 'error');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [contactFilter, contactPage]);
 
   useEffect(() => { loadAll(); }, [loadAll]);
 
@@ -115,7 +129,11 @@ export default function AdminDashboardPage() {
       else if (type === 'testimonial') await deleteTestimonial(id);
       else if (type === 'contact') await deleteContact(id);
       notify('Deleted successfully');
-      loadAll();
+      if (type === 'contact' && contacts.length === 1 && contactPage > 1) {
+        setContactPage((page) => page - 1);
+      } else {
+        loadAll();
+      }
     } catch {
       notify('Delete failed', 'error');
     }
@@ -131,9 +149,7 @@ export default function AdminDashboardPage() {
     }
   };
 
-  const filteredContacts = contactFilter === 'all'
-    ? contacts
-    : contacts.filter((c) => c.status === contactFilter);
+  const filteredContacts = contacts;
 
   if (loading) {
     return (
@@ -268,7 +284,14 @@ export default function AdminDashboardPage() {
         </div>
         <div className="admin-filters">
           {['all', 'new', 'contacted', 'completed'].map((f) => (
-            <button key={f} className={`admin-filter-btn ${contactFilter === f ? 'active' : ''}`} onClick={() => setContactFilter(f)}>
+            <button
+              key={f}
+              className={`admin-filter-btn ${contactFilter === f ? 'active' : ''}`}
+              onClick={() => {
+                setContactFilter(f);
+                setContactPage(1);
+              }}
+            >
               {f.charAt(0).toUpperCase() + f.slice(1)}
             </button>
           ))}
@@ -305,6 +328,25 @@ export default function AdminDashboardPage() {
               ))}
             </tbody>
           </table>
+        </div>
+        <div className="admin-pagination" aria-label="Inquiry pages">
+          <button
+            className="admin-filter-btn"
+            type="button"
+            disabled={contactPage <= 1 || loading}
+            onClick={() => setContactPage((page) => page - 1)}
+          >
+            Previous
+          </button>
+          <span>Page {contactPage} of {Math.max(contactPagination.pages, 1)} ({contactPagination.total} inquiries)</span>
+          <button
+            className="admin-filter-btn"
+            type="button"
+            disabled={contactPage >= contactPagination.pages || loading}
+            onClick={() => setContactPage((page) => page + 1)}
+          >
+            Next
+          </button>
         </div>
       </section>
 

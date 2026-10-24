@@ -6,6 +6,7 @@ const contactSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Contact name is required'],
       trim: true,
+      maxlength: [100, 'Name must be 100 characters or fewer'],
     },
     email: {
       type: String,
@@ -13,11 +14,13 @@ const contactSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
       match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email'],
+      maxlength: [254, 'Email must be 254 characters or fewer'],
     },
     phone: {
       type: String,
       default: '',
       trim: true,
+      maxlength: [30, 'Phone must be 30 characters or fewer'],
     },
     projectType: {
       type: String,
@@ -51,6 +54,7 @@ const contactSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Project overview message is required'],
       minlength: [10, 'Message must be at least 10 characters long'],
+      maxlength: [5000, 'Message must be 5000 characters or fewer'],
     },
     status: {
       type: String,
@@ -62,6 +66,9 @@ const contactSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+contactSchema.index({ createdAt: -1 });
+contactSchema.index({ status: 1, createdAt: -1 });
 
 const Contact = mongoose.model('Contact', contactSchema);
 export default Contact;

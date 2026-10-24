@@ -6,7 +6,7 @@
 
 export const errorHandler = (err, req, res, next) => {
   // Use existing status code if already set to an error status, otherwise default to 500
-  let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  let statusCode = err.statusCode || err.status || (res.statusCode === 200 ? 500 : res.statusCode);
   let message = err.message || 'Internal Server Error';
 
   // Handle Mongoose Bad ObjectId CastError

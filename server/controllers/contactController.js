@@ -14,16 +14,35 @@ export const createContactInquiry = async (req, res, next) => {
       budget,
       timeline,
       message,
-    } = req.body;
+    } = req.body || {};
 
-    // Validate required fields
     if (
-      !name?.trim() ||
-      !email?.trim() ||
-      !projectType ||
-      !budget ||
-      !timeline ||
-      !message?.trim()
+      typeof name !== 'string'
+      || typeof email !== 'string'
+      || typeof projectType !== 'string'
+      || typeof budget !== 'string'
+      || typeof timeline !== 'string'
+      || typeof message !== 'string'
+      || (phone !== undefined && typeof phone !== 'string')
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide valid text values for all inquiry fields.',
+      });
+    }
+
+    const normalizedName = name.trim();
+    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedPhone = phone?.trim() || '';
+    const normalizedMessage = message.trim();
+
+    if (
+      !normalizedName
+      || !normalizedEmail
+      || !projectType
+      || !budget
+      || !timeline
+      || !normalizedMessage
     ) {
       return res.status(400).json({
         success: false,
@@ -31,17 +50,28 @@ export const createContactInquiry = async (req, res, next) => {
           'Please fill in all required fields (Name, Email, Project Type, Budget, Timeline, Message).',
       });
     }
+    if (
+      normalizedName.length > 100
+      || normalizedEmail.length > 254
+      || normalizedPhone.length > 30
+      || normalizedMessage.length > 5000
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name, email, phone, or message exceeds the allowed length.',
+      });
+    }
 
     // Save inquiry to MongoDB first.
     // MongoDB is the source of truth for a successful contact submission.
     const contact = await Contact.create({
-      name: name.trim(),
-      email: email.toLowerCase().trim(),
-      phone: phone?.trim() || '',
+      name: normalizedName,
+      email: normalizedEmail,
+      phone: normalizedPhone,
       projectType,
       budget,
       timeline,
-      message: message.trim(),
+      message: normalizedMessage,
       status: 'new',
     });
 
@@ -102,8 +132,17 @@ export const getContactInquiries = async (req, res, next) => {
       filter.status = status;
     }
 
-    const pageNumber = Math.max(Number(page) || 1, 1);
-    const limitNumber = Math.min(Math.max(Number(limit) || 20, 1), 100);
+    const pageNumber = Number(page);
+    const limitNumber = Number(limit);
+    if (!Number.isSafeInteger(pageNumber) || pageNumber < 1) {
+      return res.status(400).json({ success: false, message: 'Page must be a positive integer.' });
+    }
+    if (!Number.isSafeInteger(limitNumber) || limitNumber < 1 || limitNumber > 100) {
+      return res.status(400).json({ success: false, message: 'Limit must be an integer between 1 and 100.' });
+    }
+    if (!Number.isSafeInteger((pageNumber - 1) * limitNumber)) {
+      return res.status(400).json({ success: false, message: 'Requested page is too large.' });
+    }
     const skip = (pageNumber - 1) * limitNumber;
 
     const [contacts, total] = await Promise.all([

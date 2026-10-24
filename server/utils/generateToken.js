@@ -3,7 +3,7 @@ import { getJwtSecret } from '../config/auth.js';
 
 const generateToken = (id) => {
   return jwt.sign({ id }, getJwtSecret(), {
-    expiresIn: '30d',
+    expiresIn: '8h',
   });
 };
 

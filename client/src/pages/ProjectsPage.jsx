@@ -13,6 +13,8 @@ export default function ProjectsPage() {
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState('All');
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ pages: 0, total: 0 });
 
   useEffect(() => {
     const timer = setTimeout(async () => {
@@ -21,8 +23,11 @@ export default function ProjectsPage() {
         const params = {};
         if (category !== 'All') params.category = category;
         if (search.trim()) params.search = search.trim();
+        params.page = page;
+        params.limit = 12;
         const { data } = await getProjects(params);
         setProjects(data.data || []);
+        setPagination(data.pagination || { pages: 0, total: data.count || 0 });
       } catch {
         setProjects([]);
       } finally {
@@ -30,7 +35,7 @@ export default function ProjectsPage() {
       }
     }, 300);
     return () => clearTimeout(timer);
-  }, [category, search]);
+  }, [category, search, page]);
 
   return (
     <>
@@ -64,7 +69,11 @@ export default function ProjectsPage() {
                 className="form-control"
                 placeholder="Search projects or technologies..."
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                maxLength={100}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
                 style={{ paddingLeft: 40 }}
               />
             </div>
@@ -73,7 +82,10 @@ export default function ProjectsPage() {
                 <button
                   key={cat}
                   className={`admin-filter-btn ${category === cat ? 'active' : ''}`}
-                  onClick={() => setCategory(cat)}
+                  onClick={() => {
+                    setCategory(cat);
+                    setPage(1);
+                  }}
                 >
                   {cat}
                 </button>
@@ -120,6 +132,27 @@ export default function ProjectsPage() {
                   </div>
                 </motion.article>
               ))}
+            </div>
+          )}
+          {!loading && pagination.pages > 1 && (
+            <div className="admin-pagination" aria-label="Project pages">
+              <button
+                className="admin-filter-btn"
+                type="button"
+                disabled={page <= 1}
+                onClick={() => setPage((current) => current - 1)}
+              >
+                Previous
+              </button>
+              <span>Page {page} of {pagination.pages} ({pagination.total} projects)</span>
+              <button
+                className="admin-filter-btn"
+                type="button"
+                disabled={page >= pagination.pages}
+                onClick={() => setPage((current) => current + 1)}
+              >
+                Next
+              </button>
             </div>
           )}
         </div>

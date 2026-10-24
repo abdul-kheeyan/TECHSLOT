@@ -33,8 +33,8 @@ app.use(
 );
 
 // Body Parsers
-app.use(express.json({ limit: '5mb' }));
-app.use(express.urlencoded({ extended: true, limit: '5mb' }));
+app.use(express.json({ limit: '64kb' }));
+app.use(express.urlencoded({ extended: true, limit: '64kb' }));
 
 // Health Check
 app.get('/api/health', (_req, res) => {

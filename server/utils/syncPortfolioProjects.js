@@ -1,7 +1,6 @@
 import 'dotenv/config';
 import connectDB from '../config/db.js';
 import Project from '../models/Project.js';
-import User from '../models/User.js';
 
 const projects = [
   {
@@ -105,16 +104,6 @@ const projects = [
 const syncPortfolioProjects = async () => {
   try {
     await connectDB();
-
-    if (await User.countDocuments() === 0) {
-      await User.create({
-        name: 'Admin',
-        email: 'admin@techslot.dev',
-        password: 'Admin@TechSlot2025!',
-        role: 'admin',
-      });
-      console.log('[Portfolio sync] Default admin created.');
-    }
 
     for (const project of projects) {
       await Project.findOneAndUpdate(

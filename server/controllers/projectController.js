@@ -18,13 +18,30 @@ const toStringArray = (value) => {
   return [];
 };
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // @desc    Get all projects (with filtering)
 // @route   GET /api/projects
 // @access  Public
 export const getProjects = async (req, res, next) => {
   try {
     const { category, search, featured } = req.query;
-    let query = {};
+    const page = req.query.page === undefined ? 1 : Number(req.query.page);
+    const limit = req.query.limit === undefined ? 20 : Number(req.query.limit);
+    if (!Number.isSafeInteger(page) || page < 1) {
+      return res.status(400).json({ success: false, message: 'Page must be a positive integer.' });
+    }
+    if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100) {
+      return res.status(400).json({ success: false, message: 'Limit must be an integer between 1 and 100.' });
+    }
+    if (!Number.isSafeInteger((page - 1) * limit)) {
+      return res.status(400).json({ success: false, message: 'Requested page is too large.' });
+    }
+    if (search !== undefined && (typeof search !== 'string' || search.length > 100)) {
+      return res.status(400).json({ success: false, message: 'Search must be 100 characters or fewer.' });
+    }
+
+    const query = {};
 
     if (category && category !== 'All') {
       query.category = category;
@@ -34,20 +51,33 @@ export const getProjects = async (req, res, next) => {
       query.featured = true;
     }
 
-    if (search) {
+    if (search?.trim()) {
+      const escapedSearch = escapeRegex(search.trim());
       query.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { shortDescription: { $regex: search, $options: 'i' } },
-        { technologies: { $regex: search, $options: 'i' } },
+        { title: { $regex: escapedSearch, $options: 'i' } },
+        { shortDescription: { $regex: escapedSearch, $options: 'i' } },
+        { technologies: { $regex: escapedSearch, $options: 'i' } },
       ];
     }
 
-    const projects = await Project.find(query).sort({ createdAt: -1 });
+    const [projects, total] = await Promise.all([
+      Project.find(query)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit),
+      Project.countDocuments(query),
+    ]);
 
     res.status(200).json({
       success: true,
       count: projects.length,
       data: projects,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
     });
   } catch (error) {
     next(error);

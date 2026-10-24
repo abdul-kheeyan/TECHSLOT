@@ -6,30 +6,48 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [sessionError, setSessionError] = useState('');
 
-  // Restore session on mount
-  useEffect(() => {
-    const restoreSession = async () => {
-      const token = localStorage.getItem('techslot_token');
-      if (token) {
-        try {
-          const { data } = await getMe();
-          setUser(data.data);
-        } catch {
-          localStorage.removeItem('techslot_token');
-          localStorage.removeItem('techslot_user');
-        }
-      }
+  const restoreSession = useCallback(async () => {
+    setLoading(true);
+    setSessionError('');
+    const token = localStorage.getItem('techslot_token');
+    if (!token) {
+      setUser(null);
       setLoading(false);
-    };
-    restoreSession();
+      return;
+    }
+
+    try {
+      const { data } = await getMe();
+      setUser(data.data);
+    } catch (error) {
+      setUser(null);
+      if (error.response?.status === 401) {
+        localStorage.removeItem('techslot_token');
+        localStorage.removeItem('techslot_user');
+      } else {
+        setSessionError('Unable to verify your session. Check your connection and retry.');
+      }
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) restoreSession();
+    });
+    return () => { active = false; };
+  }, [restoreSession]);
 
   const login = useCallback(async (credentials) => {
     const { data } = await loginAPI(credentials);
     const userData = data.data;
     localStorage.setItem('techslot_token', userData.token);
     localStorage.setItem('techslot_user', JSON.stringify(userData));
+    setSessionError('');
     setUser(userData);
     return userData;
   }, []);
@@ -37,10 +55,19 @@ export const AuthProvider = ({ children }) => {
   const logout = useCallback(() => {
     localStorage.removeItem('techslot_token');
     localStorage.removeItem('techslot_user');
+    setSessionError('');
     setUser(null);
   }, []);
 
-  const value = { user, loading, login, logout, isAdmin: user?.role === 'admin' };
+  const value = {
+    user,
+    loading,
+    sessionError,
+    restoreSession,
+    login,
+    logout,
+    isAdmin: user?.role === 'admin',
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

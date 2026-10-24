@@ -140,21 +140,25 @@ export default function ContactPage() {
 
               <div className="form-grid-2" style={{ marginBottom: '1rem' }}>
                 <div className="form-group">
-                  <label className="form-label">Full Name <span>*</span></label>
+                  <label className="form-label" htmlFor="contact-name">Full Name <span>*</span></label>
                   <input
+                    id="contact-name"
                     className={`form-control ${errors.name ? 'error' : ''}`}
                     value={form.name}
+                    maxLength={100}
                     onChange={(e) => setField('name', e.target.value)}
                     placeholder="Your name"
                   />
                   {errors.name && <span className="form-error">{errors.name}</span>}
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Email <span>*</span></label>
+                  <label className="form-label" htmlFor="contact-email">Email <span>*</span></label>
                   <input
+                    id="contact-email"
                     type="email"
                     className={`form-control ${errors.email ? 'error' : ''}`}
                     value={form.email}
+                    maxLength={254}
                     onChange={(e) => setField('email', e.target.value)}
                     placeholder="you@company.com"
                   />
@@ -163,10 +167,12 @@ export default function ContactPage() {
               </div>
 
               <div className="form-group" style={{ marginBottom: '1rem' }}>
-                <label className="form-label">Phone (optional)</label>
+                <label className="form-label" htmlFor="contact-phone">Phone (optional)</label>
                 <input
+                  id="contact-phone"
                   className="form-control"
                   value={form.phone}
+                  maxLength={30}
                   onChange={(e) => setField('phone', e.target.value)}
                   placeholder="+91 XXXXX XXXXX"
                 />
@@ -224,10 +230,12 @@ export default function ContactPage() {
               </div>
 
               <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-                <label className="form-label">Project Overview <span>*</span></label>
+                <label className="form-label" htmlFor="contact-message">Project Overview <span>*</span></label>
                 <textarea
+                  id="contact-message"
                   className={`form-control ${errors.message ? 'error' : ''}`}
                   value={form.message}
+                  maxLength={5000}
                   onChange={(e) => setField('message', e.target.value)}
                   placeholder="Describe your project goals, features, and any specific requirements..."
                   rows={5}

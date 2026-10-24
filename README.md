@@ -126,16 +126,20 @@ The server reads its configuration from `server/.env`. Use the committed `server
 | --- | --- |
 | `PORT` | API port. Defaults to `5000`. |
 | `MONGO_URI` | MongoDB connection string. Defaults to local MongoDB at `mongodb://127.0.0.1:27017/techslot`. |
-| `JWT_SECRET` | Secret used to sign authentication tokens. Replace the example with a unique, high-entropy secret before running outside local development. |
+| `JWT_SECRET` | Required unique random secret of at least 32 characters, used to sign authentication tokens. Generate it locally; never commit it. |
 | `NODE_ENV` | Runtime environment. Use `development` locally and `production` in production. |
 | `CLIENT_URL` | Frontend origin allowed by the API's CORS policy. Local default: `http://localhost:5173`. |
+| `ENABLE_EMAIL_NOTIFICATIONS` | Set to `true` to send inquiry email after saving SMTP configuration; defaults to disabled. |
 | `SMTP_USER` | Optional SMTP sender account used for inquiry email. |
 | `SMTP_PASS` | Optional SMTP password or provider-specific app password. |
 | `MAIL_TO` | Optional destination address for contact inquiry notifications. |
+| `SEED_ADMIN_NAME`, `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD` | Required only for the destructive development seeder. The password must be at least 12 characters. |
+| `ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` | Required by the non-destructive initial admin provisioning command. The password must be at least 12 characters. |
+| `NEW_ADMIN_PASSWORD` | Required by the production admin password-rotation command; the password must be at least 12 characters. |
 
 The frontend optionally accepts `VITE_API_URL` in `client/.env`. It can be set to the API base URL, with or without the `/api` suffix. When unset, the client uses `http://localhost:5000/api`.
 
-For production, configure the frontend origin in `CLIENT_URL`, set `VITE_API_URL` to the deployed API, and provide secure database and JWT credentials. Never expose server secrets through `VITE_*` variables; Vite embeds those values in the client bundle.
+Generate a local JWT secret with `node -e "console.log(require('node:crypto').randomBytes(48).toString('base64url'))"` and put the output in `server/.env`. Production requires a unique secret of at least 32 characters. Never expose server secrets through `VITE_*` variables; Vite embeds those values in the client bundle.
 
 ## Available scripts
 
@@ -155,6 +159,8 @@ For production, configure the frontend origin in `CLIENT_URL`, set `VITE_API_URL
 | `npm run dev` | Start the API with Node.js watch mode. |
 | `npm start` | Start the API without watch mode. |
 | `npm run seed` | Clear and seed the supported content collections and recreate the admin account. **This is destructive; see below.** |
+| `npm run provision:admin` | Create the first administrator from `ADMIN_*` environment variables without clearing application data. |
+| `npm run admin:password` | Rotate an existing administrator password using `ADMIN_EMAIL` and `NEW_ADMIN_PASSWORD`. |
 | `npm run sync:portfolio` | Run the portfolio project synchronization utility. |
 
 ## Application routes
@@ -179,7 +185,7 @@ All API routes are prefixed with `/api`. Protected endpoints require a valid JWT
 | `GET` | `/api/health` | Public | API health check |
 | `POST` | `/api/auth/login` | Public, rate limited | Sign in |
 | `GET` | `/api/auth/me` | Authenticated | Get the current user |
-| `GET` | `/api/projects` | Public | List projects; supports query filters |
+| `GET` | `/api/projects` | Public | List projects; supports category/search/featured filters and `page`/`limit` pagination (limit max 100) |
 | `GET` | `/api/projects/:id` | Public | Get a project by ID or slug |
 | `POST` | `/api/projects` | Admin | Create a project |
 | `PUT` | `/api/projects/:id` | Admin | Update a project |
@@ -194,7 +200,7 @@ All API routes are prefixed with `/api`. Protected endpoints require a valid JWT
 | `PUT` | `/api/testimonials/:id` | Admin | Update a testimonial |
 | `DELETE` | `/api/testimonials/:id` | Admin | Delete a testimonial |
 | `POST` | `/api/contact` | Public, rate limited | Submit an inquiry |
-| `GET` | `/api/contact` | Admin | List inquiries |
+| `GET` | `/api/contact` | Admin | List inquiries; supports status filters and `page`/`limit` pagination (limit max 100) |
 | `PUT` | `/api/contact/:id` | Admin | Update an inquiry status |
 | `DELETE` | `/api/contact/:id` | Admin | Delete an inquiry |
 
@@ -202,24 +208,26 @@ All API routes are prefixed with `/api`. Protected endpoints require a valid JWT
 
 Sign in at `/login`; after authentication, the protected dashboard is available at `/admin`. Admin users manage projects, services, testimonials, and contact inquiries.
 
-To seed sample portfolio content and create the admin account, run this from `server/`:
+For local development only, set `SEED_ADMIN_NAME`, `SEED_ADMIN_EMAIL`, and `SEED_ADMIN_PASSWORD` in the server environment, then seed sample content from `server/`:
 
 ```powershell
 npm run seed
 ```
 
-> **Warning:** The seeder deletes all existing users, projects, services, and testimonials before inserting sample records and recreating the admin user. Back up any data you need before running it. Do not run the seeder against a production database.
+> **Warning:** The seeder refuses to run when `NODE_ENV=production` and deletes all existing users, projects, services, and testimonials in other environments. Back up any data you need before running it.
 
-The seed utility currently contains a built-in development admin credential and prints it in the server terminal. Change or replace this credential before exposing the application to other users; never rely on sample credentials in production.
+For a fresh production database, set `ADMIN_NAME`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` securely in the operator environment and run `npm run provision:admin` once. This command refuses to run if any user already exists and does not print the password. The public `/api/auth/setup-admin` endpoint has been removed.
+
+If a deployed database may contain the former sample admin credential, set `ADMIN_EMAIL` and `NEW_ADMIN_PASSWORD` securely and run `npm run admin:password` with `NODE_ENV=production`. Rotate `JWT_SECRET` as well to invalidate previously issued tokens.
 
 ## Production notes
 
 - Build the frontend with `cd client; npm run build` and serve the generated `client/dist` directory using a static host or web server.
 - Start the API with `cd server; npm start`.
 - Use a persistent MongoDB deployment. The in-memory fallback is intended only for development; its data is temporary and disappears when the process stops.
-- Set `NODE_ENV=production`, a strong unique `JWT_SECRET`, the production `MONGO_URI`, and the correct `CLIENT_URL`.
+- Set `NODE_ENV=production`, a unique randomly generated `JWT_SECRET`, the production `MONGO_URI`, and the correct `CLIENT_URL`.
 - Configure `VITE_API_URL` at frontend build time when the API is not served from the same origin.
-- Configure SMTP variables only when contact inquiry emails are required.
+- Set `ENABLE_EMAIL_NOTIFICATIONS=true` and configure SMTP variables when contact inquiry emails are required.
 - Deploy the SPA with history fallback enabled so direct visits to routes such as `/projects` and `/login` return the frontend entry point.
 
 ## License
