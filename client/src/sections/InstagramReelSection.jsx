@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Camera } from 'lucide-react';
+import { Play } from 'lucide-react';
 import { getPortfolioSettings } from '../services/api';
 
 function getInstagramEmbedUrl(reelUrl) {
@@ -93,12 +93,13 @@ export default function InstagramReelSection() {
 
   if (loading || (!error && !reels.length)) return null;
 
-  const duration = `${Math.max(reels.length, 1) * 6}s`;
+  const tileSpeed = 4;
+  const duration = `${Math.max(reels.length, 1) * tileSpeed}s`;
 
   return (
     <section className="section instagram-reel-section">
       <div className="container">
-        <div className="section-header">
+        <div className="section-header center">
           <span className="section-label">Instagram</span>
           <h2 className="section-title">Latest <span className="text-gradient">Reels</span></h2>
           <p className="section-subtitle">
@@ -118,7 +119,7 @@ export default function InstagramReelSection() {
                 key={reelUrl}
                 style={{
                   '--reel-duration': duration,
-                  '--reel-delay': `-${(index + 0.5) * 6}s`,
+                  '--reel-delay': `-${index * tileSpeed}s`,
                 }}
               >
                 <blockquote
@@ -136,12 +137,16 @@ export default function InstagramReelSection() {
                   aria-label={`Play Reel ${index + 1}`}
                   onClick={() => setActiveReel(reelUrl)}
                 >
-                  <span className="instagram-reel-fallback-icon"><Camera size={28} /></span>
-                  <span>Play Reel</span>
+                  <span className="instagram-reel-play-icon"><Play size={26} fill="currentColor" /></span>
                 </button>
               </article>
             ))}
           </div>
+        )}
+        {!error && reels.length > 0 && (
+          <p className="instagram-reel-caption">
+            A glimpse into the work, ideas, and moments behind each project.
+          </p>
         )}
       </div>
       {activeReel && (
