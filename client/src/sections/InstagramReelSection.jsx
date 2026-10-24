@@ -1,11 +1,25 @@
 import { useEffect, useState } from 'react';
-import { Camera, ExternalLink } from 'lucide-react';
+import { Camera } from 'lucide-react';
 import { getPortfolioSettings } from '../services/api';
+
+function getInstagramEmbedUrl(reelUrl) {
+  try {
+    const url = new URL(reelUrl);
+    const match = url.pathname.match(/^\/(?:reel|p|tv)\/([A-Za-z0-9_-]+)\/?$/);
+    if (!['www.instagram.com', 'instagram.com'].includes(url.hostname) || !match) {
+      return null;
+    }
+    return `https://www.instagram.com/reel/${match[1]}/embed/`;
+  } catch {
+    return null;
+  }
+}
 
 export default function InstagramReelSection() {
   const [reels, setReels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [activeReel, setActiveReel] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -61,6 +75,22 @@ export default function InstagramReelSection() {
     };
   }, [reels]);
 
+  useEffect(() => {
+    if (!activeReel) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setActiveReel(null);
+    };
+
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [activeReel]);
+
   if (loading || (!error && !reels.length)) return null;
 
   const duration = `${Math.max(reels.length, 1) * 6}s`;
@@ -96,25 +126,62 @@ export default function InstagramReelSection() {
                   data-instgrm-permalink={reelUrl}
                   data-instgrm-version="14"
                 >
-                  <a href={reelUrl} target="_blank" rel="noopener noreferrer">
-                    <span className="instagram-reel-fallback-icon"><Camera size={28} /></span>
-                    <span>Watch Reel {index + 1} on Instagram</span>
-                    <ExternalLink size={14} />
+                  <a href={reelUrl} tabIndex={-1} aria-hidden="true">
+                    Watch Reel {index + 1}
                   </a>
                 </blockquote>
-                <a
-                  className="instagram-reel-open"
-                  href={reelUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  className="instagram-reel-play"
+                  type="button"
+                  aria-label={`Play Reel ${index + 1}`}
+                  onClick={() => setActiveReel(reelUrl)}
                 >
-                  Open on Instagram <ExternalLink size={14} />
-                </a>
+                  <span className="instagram-reel-fallback-icon"><Camera size={28} /></span>
+                  <span>Play Reel</span>
+                </button>
               </article>
             ))}
           </div>
         )}
       </div>
+      {activeReel && (
+        <div
+          className="instagram-reel-modal-backdrop"
+          role="presentation"
+          onClick={() => setActiveReel(null)}
+        >
+          <div
+            className="instagram-reel-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Instagram Reel player"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              className="instagram-reel-modal-close"
+              type="button"
+              aria-label="Close Reel"
+              onClick={() => setActiveReel(null)}
+            >
+              &times;
+            </button>
+            {getInstagramEmbedUrl(activeReel) ? (
+              <iframe
+                className="instagram-reel-player"
+                src={getInstagramEmbedUrl(activeReel)}
+                title="Instagram Reel"
+                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                allowFullScreen
+                loading="eager"
+              />
+            ) : (
+              <p className="instagram-reel-modal-error" role="alert">
+                This Instagram Reel link is invalid and cannot be played.
+              </p>
+            )}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
