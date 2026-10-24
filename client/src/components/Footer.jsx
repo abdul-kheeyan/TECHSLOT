@@ -42,6 +42,7 @@ export default function Footer() {
                 { label: 'GitHub', href: 'https://github.com/abdul-kheeyan', icon: 'github-icon' },
                 { label: 'LinkedIn', href: 'https://www.linkedin.com/in/abdul-kheeyan', icon: 'linkedin-icon' },
                 { label: 'Email', href: GMAIL_COMPOSE_URL, icon: Mail },
+                { label: 'Instagram', href: 'https://www.instagram.com/techslot_dev', icon: 'instagram-icon' },
               ].map((social) => (
                 <a
                   key={social.label}
@@ -72,12 +73,12 @@ export default function Footer() {
                     e.currentTarget.style.color = 'var(--color-text-secondary)';
                   }}
                 >
-                  {social.label === 'Email' ? (
-                    <Mail size={18} strokeWidth={1.8} aria-hidden="true" />
-                  ) : (
+                  {social.label !== 'Email' ? (
                     <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true">
                       <use href={`/icons.svg#${social.icon}`} />
                     </svg>
+                  ) : (
+                    <Mail size={18} strokeWidth={1.8} aria-hidden="true" />
                   )}
                 </a>
               ))}
