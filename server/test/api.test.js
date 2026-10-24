@@ -6,6 +6,7 @@ import { getJwtSecret } from '../config/auth.js';
 import generateToken from '../utils/generateToken.js';
 import Contact from '../models/Contact.js';
 import Project from '../models/Project.js';
+import PortfolioSettings from '../models/PortfolioSettings.js';
 import User from '../models/User.js';
 
 process.env.JWT_SECRET = process.env.JWT_SECRET || 'integration-test-jwt-secret-0123456789abcdef';
@@ -107,6 +108,50 @@ test('secures setup, validates contacts, and paginates public projects and admin
     body: JSON.stringify({ email: ' ADMIN@EXAMPLE.COM ', password: 'SecurePassword123!' }),
   });
   assert.equal(loginResponse.status, 200);
+  const loginBody = await loginResponse.json();
+  const settingsResponse = await fetch(`${baseUrl}/portfolio-settings`);
+  const settingsBody = await settingsResponse.json();
+  assert.equal(settingsResponse.status, 200);
+  assert.deepEqual(settingsBody.data, { instagramReelUrl: '' });
+  assert.match(
+    settingsResponse.headers.get('content-security-policy'),
+    /frame-src 'self' https:\/\/www\.instagram\.com/
+  );
+
+  const unauthorizedSettingsResponse = await fetch(`${baseUrl}/portfolio-settings/instagram-reel`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ instagramReelUrl: 'https://www.instagram.com/reel/ABC123/' }),
+  });
+  assert.equal(unauthorizedSettingsResponse.status, 401);
+
+  const invalidReelResponse = await fetch(`${baseUrl}/portfolio-settings/instagram-reel`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${loginBody.data.token}`,
+    },
+    body: JSON.stringify({ instagramReelUrl: 'https://example.com/reel/ABC123/' }),
+  });
+  assert.equal(invalidReelResponse.status, 400);
+
+  const saveReelResponse = await fetch(`${baseUrl}/portfolio-settings/instagram-reel`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${loginBody.data.token}`,
+    },
+    body: JSON.stringify({ instagramReelUrl: 'https://www.instagram.com/reel/ABC123/?igsh=tracking' }),
+  });
+  const savedReelBody = await saveReelResponse.json();
+  assert.equal(saveReelResponse.status, 200);
+  assert.equal(savedReelBody.data.instagramReelUrl, 'https://www.instagram.com/reel/ABC123/');
+  assert.equal(await PortfolioSettings.countDocuments(), 1);
+
+  const savedSettingsResponse = await fetch(`${baseUrl}/portfolio-settings`);
+  const savedSettingsBody = await savedSettingsResponse.json();
+  assert.equal(savedSettingsBody.data.instagramReelUrl, 'https://www.instagram.com/reel/ABC123/');
+
   await Contact.insertMany(
     Array.from({ length: 25 }, (_, index) => ({
       name: `Contact ${index}`,

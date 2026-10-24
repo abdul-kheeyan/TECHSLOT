@@ -94,6 +94,13 @@ export const updateTestimonial = (id, data) =>
 export const deleteTestimonial = (id) =>
   api.delete(`/testimonials/${id}`);
 
+// ===== PORTFOLIO SETTINGS =====
+export const getPortfolioSettings = () =>
+  api.get('/portfolio-settings');
+
+export const updateInstagramReel = (instagramReelUrl) =>
+  api.put('/portfolio-settings/instagram-reel', { instagramReelUrl });
+
 // ===== CONTACT =====
 export const submitContact = (data) =>
   api.post('/contact', data);

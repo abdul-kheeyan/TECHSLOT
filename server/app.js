@@ -7,12 +7,21 @@ import serviceRoutes from './routes/serviceRoutes.js';
 import testimonialRoutes from './routes/testimonialRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import chatbotRoutes from './routes/chatbotRoutes.js';
+import portfolioSettingsRoutes from './routes/portfolioSettingsRoutes.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
 const app = express();
 
 // Security Headers
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        frameSrc: ["'self'", 'https://www.instagram.com'],
+      },
+    },
+  })
+);
 
 // CORS - allow client origin
 const allowedOrigins = [
@@ -51,6 +60,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/testimonials', testimonialRoutes);
+app.use('/api/portfolio-settings', portfolioSettingsRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/chatbot', chatbotRoutes);
 

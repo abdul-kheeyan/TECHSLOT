@@ -4,6 +4,7 @@ import StatsSection from '../sections/StatsSection';
 import ServicesSection from '../sections/ServicesSection';
 import ProcessSection from '../sections/ProcessSection';
 import FeaturedProjectsSection from '../sections/FeaturedProjectsSection';
+import InstagramReelSection from '../sections/InstagramReelSection';
 import WhyChooseSection from '../sections/WhyChooseSection';
 import TestimonialsSection from '../sections/TestimonialsSection';
 import CtaSection from '../sections/CtaSection';
@@ -21,6 +22,7 @@ export default function HomePage() {
       <ServicesSection />
       <ProcessSection />
       <FeaturedProjectsSection />
+      <InstagramReelSection />
       <WhyChooseSection />
       <TestimonialsSection />
       <CtaSection />

@@ -9,6 +9,7 @@ import {
   getProjects, createProject, updateProject, deleteProject,
   getServices, createService, updateService, deleteService,
   getTestimonials, createTestimonial, updateTestimonial, deleteTestimonial,
+  getPortfolioSettings, updateInstagramReel,
   getContacts, updateContactStatus, deleteContact,
 } from '../services/api';
 import { formatDate, CONTACT_STATUS } from '../utils/helpers';
@@ -32,6 +33,8 @@ export default function AdminDashboardPage() {
   const [projects, setProjects] = useState([]);
   const [services, setServices] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
+  const [instagramReelUrl, setInstagramReelUrl] = useState('');
+  const [savingInstagramReel, setSavingInstagramReel] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [contactFilter, setContactFilter] = useState('all');
   const [contactPage, setContactPage] = useState(1);
@@ -47,8 +50,9 @@ export default function AdminDashboardPage() {
   const loadAll = useCallback(async () => {
     setLoading(true);
     try {
-      const [p, s, t, c, allContacts] = await Promise.all([
+      const [p, s, t, settings, c, allContacts] = await Promise.all([
         getProjects({ limit: 100 }), getServices(), getTestimonials(),
+        getPortfolioSettings(),
         getContacts({
           page: contactPage,
           limit: 20,
@@ -63,6 +67,7 @@ export default function AdminDashboardPage() {
       setProjects(proj);
       setServices(serv);
       setTestimonials(test);
+      setInstagramReelUrl(settings.data.data.instagramReelUrl);
       setContacts(cont);
       setContactPagination(c.data.pagination || { page: contactPage, pages: 0, total: cont.length });
       setMetrics({
@@ -118,6 +123,19 @@ export default function AdminDashboardPage() {
       notify(err.response?.data?.message || 'Save failed', 'error');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSaveInstagramReel = async () => {
+    setSavingInstagramReel(true);
+    try {
+      const { data } = await updateInstagramReel(instagramReelUrl);
+      setInstagramReelUrl(data.data.instagramReelUrl);
+      notify('Instagram Reel saved successfully');
+    } catch (err) {
+      notify(err.response?.data?.message || 'Failed to save Instagram Reel', 'error');
+    } finally {
+      setSavingInstagramReel(false);
     }
   };
 
@@ -218,6 +236,29 @@ export default function AdminDashboardPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      </section>
+
+      <section id="admin-instagram-reel" style={{ marginBottom: '3rem' }}>
+        <div className="admin-header">
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Instagram Reel</h2>
+        </div>
+        <div className="instagram-reel-settings">
+          <div className="form-group">
+            <label className="form-label" htmlFor="admin-instagram-reel-url">Instagram Reel URL</label>
+            <input
+              id="admin-instagram-reel-url"
+              className="form-control"
+              type="url"
+              placeholder="https://www.instagram.com/reel/..."
+              value={instagramReelUrl}
+              onChange={(event) => setInstagramReelUrl(event.target.value)}
+            />
+            <small>Paste a public Instagram Reel link. Leave it blank to remove the Reel from the homepage.</small>
+          </div>
+          <Button onClick={handleSaveInstagramReel} loading={savingInstagramReel}>
+            Save Reel
+          </Button>
         </div>
       </section>
 
