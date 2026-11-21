@@ -1,3 +1,4 @@
+import { useLayoutEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import MainLayout from './layouts/MainLayout';
@@ -16,6 +17,14 @@ import NotFoundPage from './pages/NotFoundPage';
 
 export default function App() {
   const location = useLocation();
+
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    const previousScrollBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = 'auto';
+    window.scrollTo(0, 0);
+    root.style.scrollBehavior = previousScrollBehavior;
+  }, [location.pathname]);
 
   return (
     <AnimatePresence mode="wait" initial={false}>

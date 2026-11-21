@@ -5,6 +5,7 @@ import ProcessSection from '../sections/ProcessSection';
 import FeaturedProjectsSection from '../sections/FeaturedProjectsSection';
 import WhyChooseSection from '../sections/WhyChooseSection';
 import TestimonialsSection from '../sections/TestimonialsSection';
+import FaqSection from '../sections/FaqSection';
 import CtaSection from '../sections/CtaSection';
 
 export default function HomePage() {
@@ -21,6 +22,7 @@ export default function HomePage() {
       <FeaturedProjectsSection />
       <WhyChooseSection />
       <TestimonialsSection />
+      <FaqSection />
       <CtaSection />
     </>
   );

@@ -1103,3 +1103,111 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Homepage FAQ */
+.faq-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.7fr) minmax(0, 1.3fr);
+  gap: clamp(3rem, 9vw, 9rem);
+  align-items: start;
+}
+.faq-heading {
+  position: sticky;
+  top: calc(var(--navbar-height) + 2rem);
+}
+.faq-heading .section-title {
+  margin-top: 16px;
+  font-size: clamp(2.2rem, 4.5vw, 4rem);
+}
+.faq-heading .section-subtitle {
+  font-size: 0.94rem;
+}
+.faq-contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 26px;
+  color: #e4e6e9;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.faq-contact-link svg {
+  transition: transform 180ms ease;
+}
+.faq-contact-link:hover svg {
+  transform: translate(2px, -2px);
+}
+.faq-list {
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+.faq-item {
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 76px;
+  padding: 18px 0;
+  color: #e2e4e7;
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.96rem;
+  font-weight: 550;
+}
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+.faq-item summary:focus-visible {
+  outline: 2px solid #d5d8dc;
+  outline-offset: 4px;
+}
+.faq-toggle {
+  position: relative;
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+}
+.faq-toggle::before,
+.faq-toggle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 1px;
+  background: #a4a9b0;
+  transform: translate(-50%, -50%);
+  transition: transform 180ms ease;
+}
+.faq-toggle::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+.faq-item[open] .faq-toggle::after {
+  transform: translate(-50%, -50%) rotate(0);
+}
+.faq-item > p {
+  max-width: 620px;
+  padding: 0 36px 22px 0;
+  color: #9da2aa;
+  font-size: 0.88rem;
+  line-height: 1.8;
+}
+@media (max-width: 768px) {
+  .faq-layout {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .faq-heading {
+    position: static;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-toggle::before,
+  .faq-toggle::after,
+  .faq-contact-link svg {
+    transition: none;
+  }
+}
