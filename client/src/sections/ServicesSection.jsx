@@ -21,13 +21,13 @@ export default function ServicesSection() {
     <section className="section">
       <div className="container">
         <motion.div
-          className="section-header center"
+          className="section-header"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <span className="section-label">What I Do</span>
-          <h2 className="section-title">Services Built for <span className="text-gradient">Growth</span></h2>
+          <span className="section-kicker">Capabilities / 01</span>
+          <h2 className="section-title">Built for the work<br />that comes next.</h2>
           <p className="section-subtitle">
             From landing pages to full-stack SaaS platforms — every service is engineered for performance, scalability, and results.
           </p>
@@ -36,22 +36,23 @@ export default function ServicesSection() {
         {loading ? (
           <div className="loading-container"><div className="spinner" /></div>
         ) : (
-          <div className="grid-3">
+          <div className="service-editorial-list">
             {services.map((service, i) => (
               <motion.div
                 key={service._id}
-                className="service-card"
+                className="service-editorial-row"
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08, duration: 0.5 }}
               >
-                <div className="service-icon">{getServiceIcon(service.icon, 24)}</div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{service.title}</h3>
-                <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', lineHeight: 1.7, flex: 1 }}>
-                  {truncate(service.description, 140)}
-                </p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                <span className="service-row-number">{String(i + 1).padStart(2, '0')}</span>
+                <div className="service-row-icon">{getServiceIcon(service.icon, 22)}</div>
+                <div className="service-row-copy">
+                  <h3>{service.title}</h3>
+                  <p>{truncate(service.description, 150)}</p>
+                </div>
+                <div className="service-row-tech">
                   {service.technologies.slice(0, 3).map((tech) => (
                     <span key={tech} className="tech-tag">{tech}</span>
                   ))}

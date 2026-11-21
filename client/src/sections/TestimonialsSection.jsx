@@ -24,8 +24,8 @@ export default function TestimonialsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <span className="section-label">Testimonials</span>
-          <h2 className="section-title">What Clients <span className="text-gradient">Say</span></h2>
+          <span className="section-kicker">Client trust / 05</span>
+          <h2 className="section-title">Built around a reliable process.</h2>
           <p className="section-subtitle">
             Real feedback from businesses and founders who trusted techslot_dev with their digital products.
           </p>
@@ -33,7 +33,7 @@ export default function TestimonialsSection() {
 
         {loading ? (
           <div className="loading-container"><div className="spinner" /></div>
-        ) : (
+        ) : testimonials.length ? (
           <div className="testimonial-grid">
             {testimonials.map((t, i) => (
               <motion.div
@@ -67,6 +67,24 @@ export default function TestimonialsSection() {
                 </div>
               </motion.div>
             ))}
+          </div>
+        ) : (
+          <div className="trust-editorial">
+            <div>
+              <span className="trust-number">1</span>
+              <h3>Clear scope</h3>
+              <p>Deliverables, responsibilities, timeline, and cost are agreed before development begins.</p>
+            </div>
+            <div>
+              <span className="trust-number">2</span>
+              <h3>Direct collaboration</h3>
+              <p>Work directly with the developer doing the design and engineering, without account-layer overhead.</p>
+            </div>
+            <div>
+              <span className="trust-number">3</span>
+              <h3>Production ownership</h3>
+              <p>Code, documentation, deployment, and handoff are treated as part of the finished product.</p>
+            </div>
           </div>
         )}
       </div>

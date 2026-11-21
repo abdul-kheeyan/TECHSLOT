@@ -81,7 +81,7 @@ export default function ContactPage() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <span className="section-label">Contact</span>
+            <span className="section-kicker">Contact / Start</span>
             <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 800, marginBottom: '1rem' }}>
               Start Your <span className="text-gradient">Project</span>
             </h1>

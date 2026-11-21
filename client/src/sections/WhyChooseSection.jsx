@@ -15,13 +15,13 @@ export default function WhyChooseSection() {
     <section className="section" style={{ background: 'var(--color-bg-secondary)' }}>
       <div className="container">
         <motion.div
-          className="section-header center"
+          className="section-header"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <span className="section-label">Why techslot_dev</span>
-          <h2 className="section-title">Engineering You Can <span className="text-gradient">Trust</span></h2>
+          <span className="section-kicker">Working together / 04</span>
+          <h2 className="section-title">One accountable partner.<br />Clear by design.</h2>
           <p className="section-subtitle">
             Not just a developer — a technical partner committed to building products that perform, scale, and impress.
           </p>

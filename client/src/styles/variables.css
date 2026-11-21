@@ -1,10 +1,10 @@
 :root {
   /* ===== BRAND COLORS ===== */
-  --color-bg-primary: #050914;
-  --color-bg-secondary: #080e1e;
-  --color-bg-card: #0d1527;
-  --color-bg-card-hover: #111e38;
-  --color-bg-elevated: #131e36;
+  --color-bg-primary: #090a0c;
+  --color-bg-secondary: #0d0f12;
+  --color-bg-card: #111317;
+  --color-bg-card-hover: #16191e;
+  --color-bg-elevated: #171a1f;
   --color-bg-glass: rgba(13, 21, 39, 0.7);
   --color-bg-glass-border: rgba(56, 189, 248, 0.12);
 

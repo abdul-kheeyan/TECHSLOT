@@ -25,7 +25,7 @@ const GMAIL_COMPOSE_URL = `https://mail.google.com/mail/?view=cm&fs=1&to=${encod
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer style={{ background: 'var(--color-bg-secondary)', borderTop: '1px solid rgba(56,189,248,0.08)', marginTop: 'auto' }}>
+    <footer style={{ background: '#090a0c', borderTop: '1px solid rgba(255,255,255,0.08)', marginTop: 'auto' }}>
       <div className="container" style={{ padding: '4rem 1.5rem 2rem' }}>
         <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr', gap: '3rem', marginBottom: '3rem' }}>
           {/* Brand col */}

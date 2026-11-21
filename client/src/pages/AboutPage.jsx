@@ -34,7 +34,7 @@ export default function AboutPage() {
             transition={{ duration: 0.6 }}
             style={{ maxWidth: 720 }}
           >
-            <span className="section-label">About Me</span>
+            <span className="section-kicker">About Techslot</span>
             <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 800, lineHeight: 1.15, marginBottom: '1.5rem' }}>
               Engineering Digital Products with <span className="text-gradient">Purpose & Precision</span>
             </h1>

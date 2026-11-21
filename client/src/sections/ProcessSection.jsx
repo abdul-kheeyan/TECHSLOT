@@ -15,13 +15,13 @@ export default function ProcessSection() {
     <section className="section" style={{ background: 'var(--color-bg-secondary)' }}>
       <div className="container">
         <motion.div
-          className="section-header center"
+          className="section-header"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <span className="section-label">How It Works</span>
-          <h2 className="section-title">A Proven <span className="text-gradient">6-Step Process</span></h2>
+          <span className="section-kicker">Process / 03</span>
+          <h2 className="section-title">From first call to final release.</h2>
           <p className="section-subtitle">
             Every project follows a structured workflow designed to deliver exceptional results on time and on budget.
           </p>

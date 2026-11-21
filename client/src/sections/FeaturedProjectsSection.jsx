@@ -17,8 +17,8 @@ export default function FeaturedProjectsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <span className="section-label">Portfolio</span>
-          <h2 className="section-title">Featured <span className="text-gradient">Projects</span></h2>
+          <span className="section-kicker">Selected work / 02</span>
+          <h2 className="section-title">Work with a clear purpose.</h2>
           <p className="section-subtitle">
             A selection of recent work showcasing full-stack engineering, clean architecture, and polished user experiences.
           </p>
@@ -27,11 +27,11 @@ export default function FeaturedProjectsSection() {
         {loading ? (
           <div className="loading-container"><div className="spinner" /></div>
         ) : (
-          <div className="grid-3">
+          <div className="featured-project-list">
             {(projects.length ? projects : []).slice(0, 3).map((project, i) => (
               <motion.article
                 key={project._id}
-                className="project-card"
+                className={`featured-project featured-project-${i + 1}`}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
