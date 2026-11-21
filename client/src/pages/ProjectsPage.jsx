@@ -54,7 +54,7 @@ export default function ProjectsPage() {
           >
             <span className="section-label">Portfolio</span>
             <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 800, marginBottom: '1rem' }}>
-              Project <span className="text-gradient">Gallery</span>
+              Selected <span className="text-gradient">Projects</span>
             </h1>
             <p className="section-subtitle">
               Filter by category or search by technology to explore past work across industries and stack types.

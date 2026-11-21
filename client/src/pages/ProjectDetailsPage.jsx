@@ -3,9 +3,9 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ExternalLink, GitBranch, CheckCircle, AlertTriangle } from 'lucide-react';
 import SEO from '../components/SEO';
-import Badge from '../components/Badge';
 import { getProjectById } from '../services/api';
 import ProjectImage from '../components/ProjectImage';
+import CtaSection from '../sections/CtaSection';
 
 export default function ProjectDetailsPage() {
   const { id } = useParams();
@@ -46,8 +46,8 @@ export default function ProjectDetailsPage() {
     <>
       <SEO title={project.title} description={project.shortDescription} path={`/projects/${id}`} />
 
-      <article>
-        <section style={{ paddingTop: '2rem', paddingBottom: '3rem' }}>
+      <article className="project-case-study">
+        <section className="project-case-hero">
           <div className="container">
             <Link
               to="/projects"
@@ -57,39 +57,17 @@ export default function ProjectDetailsPage() {
             </Link>
 
             <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}>
-              <div style={{ display: 'flex', gap: 8, marginBottom: '1rem', flexWrap: 'wrap' }}>
-                <Badge variant="blue">{project.category}</Badge>
-                {project.featured && <Badge variant="accent">Featured</Badge>}
-              </div>
-              <h1 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', fontWeight: 800, lineHeight: 1.15, marginBottom: '1rem' }}>
-                {project.title}
-              </h1>
-              <p style={{ fontSize: '1.05rem', color: 'var(--color-text-secondary)', lineHeight: 1.75, maxWidth: 720, marginBottom: '1.5rem' }}>
-                {project.shortDescription}
-              </p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: '1.5rem' }}>
-                {project.technologies.map((tech) => (
-                  <span key={tech} className="tech-tag">{tech}</span>
-                ))}
-              </div>
-              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <span className="section-kicker">Case study / {project.category}</span>
+              <h1>{project.title}</h1>
+              <p className="project-case-summary">{project.shortDescription}</p>
+              <div className="project-case-actions">
                 {project.liveUrl && (
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '0.6rem 1.25rem', background: 'var(--gradient-primary)', color: '#fff', borderRadius: 9999, fontWeight: 600, fontSize: '0.875rem' }}
-                  >
+                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
                     Live Demo <ExternalLink size={14} />
                   </a>
                 )}
                 {project.githubUrl && (
-                  <a
-                    href={project.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '0.6rem 1.25rem', border: '1px solid rgba(56,189,248,0.3)', color: 'var(--color-text-primary)', borderRadius: 9999, fontWeight: 600, fontSize: '0.875rem' }}
-                  >
+                  <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
                     View Code <GitBranch size={14} />
                   </a>
                 )}
@@ -98,63 +76,71 @@ export default function ProjectDetailsPage() {
           </div>
         </section>
 
-        <section style={{ marginBottom: '3rem' }}>
+        <section className="project-case-cover">
           <div className="container">
-            <ProjectImage
-              project={project}
-              style={{ width: '100%', borderRadius: 'var(--radius-xl)', border: '1px solid rgba(56,189,248,0.15)', maxHeight: 480, objectFit: 'cover' }}
-            />
+            <ProjectImage project={project} className="project-case-cover-image" />
           </div>
         </section>
 
-        <section className="section-sm">
+        <section className="project-case-body section">
           <div className="container">
-            <div className="project-details-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '3rem' }}>
-              <div>
-                <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem' }}>Overview</h2>
-                <p style={{ color: 'var(--color-text-secondary)', lineHeight: 1.8, marginBottom: '2.5rem' }}>{project.description}</p>
+            <dl className="project-case-facts">
+              <div><dt>Project type</dt><dd>{project.category}</dd></div>
+              <div><dt>Build</dt><dd>{project.technologies?.slice(0, 4).join(', ')}</dd></div>
+              <div><dt>Status</dt><dd>{project.featured ? 'Featured work' : 'Completed project'}</dd></div>
+            </dl>
 
-                {project.challenges?.length > 0 && (
-                  <>
-                    <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem' }}>Challenges</h2>
-                    <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10, marginBottom: '2.5rem' }}>
+            <div className="project-case-story">
+              <div className="project-case-story-heading">
+                <span className="section-kicker">01 / Context</span>
+                <h2>Overview</h2>
+              </div>
+              <p>{project.description}</p>
+            </div>
+
+            {project.challenges?.length > 0 && (
+              <div className="project-case-story project-case-story-challenge">
+                <div className="project-case-story-heading">
+                  <span className="section-kicker">02 / Constraints</span>
+                  <h2>Challenge</h2>
+                </div>
+                    <ul>
                       {project.challenges.map((c) => (
-                        <li key={c} style={{ display: 'flex', gap: 10, color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
+                        <li key={c}>
                           <AlertTriangle size={16} color="var(--color-warning)" style={{ flexShrink: 0, marginTop: 2 }} /> {c}
                         </li>
                       ))}
                     </ul>
-                  </>
-                )}
+              </div>
+            )}
 
-                {project.solutions?.length > 0 && (
-                  <>
-                    <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem' }}>Solutions</h2>
-                    <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {project.solutions?.length > 0 && (
+              <div className="project-case-story">
+                <div className="project-case-story-heading">
+                  <span className="section-kicker">03 / Execution</span>
+                  <h2>Solution</h2>
+                </div>
+                    <ul>
                       {project.solutions.map((s) => (
-                        <li key={s} style={{ display: 'flex', gap: 10, color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
+                        <li key={s}>
                           <CheckCircle size={16} color="var(--color-success)" style={{ flexShrink: 0, marginTop: 2 }} /> {s}
                         </li>
                       ))}
                     </ul>
-                  </>
-                )}
               </div>
+            )}
 
-              <div>
-                <div className="card" style={{ position: 'sticky', top: 'calc(var(--navbar-height) + 1rem)' }}>
-                  <h3 style={{ fontWeight: 700, marginBottom: '1rem' }}>Key Features</h3>
-                  <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    {(project.features || []).map((f) => (
-                      <li key={f} style={{ display: 'flex', gap: 8, fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
-                        <CheckCircle size={14} color="var(--color-blue-accent)" style={{ flexShrink: 0, marginTop: 2 }} />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
+            {project.features?.length > 0 && (
+              <div className="project-case-features">
+                <span className="section-kicker">04 / Delivered</span>
+                <h2>Core features</h2>
+                <div>
+                  {project.features.map((feature) => (
+                    <span key={feature}><CheckCircle size={15} /> {feature}</span>
+                  ))}
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </section>
 
@@ -176,6 +162,7 @@ export default function ProjectDetailsPage() {
             </div>
           </section>
         )}
+        <CtaSection />
       </article>
     </>
   );

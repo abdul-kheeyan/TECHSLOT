@@ -53,7 +53,7 @@ export default function ContactPage() {
     setLoading(true);
     try {
       await submitContact(form);
-      setNotification({ message: 'Your inquiry has been submitted! I\'ll get back to you within 24 hours.', type: 'success', visible: true });
+      setNotification({ message: 'Your inquiry has been submitted. I’ll review the details and follow up directly.', type: 'success', visible: true });
       setForm(initialForm);
     } catch (err) {
       setNotification({
@@ -74,54 +74,58 @@ export default function ContactPage() {
         path="/contact"
       />
 
-      <section className="section" style={{ paddingTop: '3rem' }}>
+      <section className="section contact-page" style={{ paddingTop: '3rem' }}>
         <div className="container">
           <motion.div
-            className="section-header center"
+            className="section-header"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <span className="section-kicker">Contact / Start</span>
-            <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 800, marginBottom: '1rem' }}>
-              Start Your <span className="text-gradient">Project</span>
-            </h1>
+            <span className="section-kicker">Project inquiry / Contact</span>
+            <h1 className="section-title">Tell me what you want to build.</h1>
             <p className="section-subtitle">
-              Tell me about your project and I&apos;ll respond within 24 hours with a tailored plan and quote.
+              Share the goal, timeline, and useful context. A clear brief helps me understand the project and respond with the right next steps.
             </p>
           </motion.div>
 
-          <div className="contact-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '3rem', alignItems: 'start' }}>
+          <div className="contact-grid">
             <motion.div
+              className="contact-aside"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <div className="card" style={{ marginBottom: '1.5rem' }}>
-                <h3 style={{ fontWeight: 700, marginBottom: '1.25rem' }}>Get in Touch</h3>
+              <div className="contact-details">
+                <span className="section-kicker">Direct contact</span>
                 {[
-                  { icon: Mail, label: EMAIL_ADDRESS, href: GMAIL_COMPOSE_URL },
-                  { icon: MapPin, label: 'Remote — Worldwide', href: null },
-                  { icon: Clock, label: 'Response within 24h', href: null },
+                  { icon: Mail, label: 'Email', value: EMAIL_ADDRESS, href: GMAIL_COMPOSE_URL },
+                  { icon: MapPin, label: 'Working location', value: 'Remote — worldwide', href: null },
+                  { icon: Clock, label: 'Availability', value: 'Open to selected projects', href: null },
                 ].map(({ icon: Icon, label, href }) => (
-                  <div key={label} style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: '1rem' }}>
-                    <div className="service-icon" style={{ width: 40, height: 40 }}><Icon size={18} /></div>
+                  <div className="contact-detail" key={label}>
+                    <Icon size={17} aria-hidden="true" />
                     {href ? (
-                      <a href={href} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>{label}</a>
+                      <a href={href} target="_blank" rel="noopener noreferrer">
+                        <span>{label}</span>
+                        {EMAIL_ADDRESS}
+                      </a>
                     ) : (
-                      <span style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>{label}</span>
+                      <p>
+                        <span>{label}</span>
+                        {label === 'Working location' ? 'Remote — worldwide' : 'Open to selected projects'}
+                      </p>
                     )}
                   </div>
                 ))}
               </div>
-              <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', lineHeight: 1.7 }}>
-                All inquiries are reviewed personally. No automated responses — just a real conversation about your project.
+              <p className="contact-aside-note">
+                Every inquiry is reviewed personally. A short description is enough to begin; you do not need every technical detail defined.
               </p>
             </motion.div>
 
             <motion.form
               onSubmit={handleSubmit}
-              className="card"
-              style={{ padding: '2rem' }}
+              className="contact-form"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}

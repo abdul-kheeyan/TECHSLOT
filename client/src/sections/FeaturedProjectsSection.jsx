@@ -89,7 +89,7 @@ export default function FeaturedProjectsSection() {
           viewport={{ once: true }}
         >
           <Link
-            to="/projects"
+            to="/case-studies"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -103,7 +103,7 @@ export default function FeaturedProjectsSection() {
               boxShadow: '0 4px 20px rgba(37,99,235,0.35)',
             }}
           >
-            View All Projects <ArrowRight size={16} />
+            View Case Studies <ArrowRight size={16} />
           </Link>
         </motion.div>
       </div>
