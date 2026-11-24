@@ -55,6 +55,23 @@ test('reports SEO and mobile apps as not listed services', async () => {
   assert.match(combinedAnswer(await ask('do you build mobile apps')), /not listed/i);
 });
 
+test('answers common project questions typed in English and Hinglish', async () => {
+  const buildEnglish = await ask('Can you build a website for my bakery?');
+  const buildHinglish = await ask('Mujhe website banwani hai');
+  const existingEnglish = await ask('Can you work on my existing website?');
+  const existingHinglish = await ask('existing website par kaam karte ho?');
+  const inquiry = await ask('What should I include in my first inquiry?');
+
+  assert.match(combinedAnswer(buildEnglish), /services listed/i);
+  assert.match(combinedAnswer(buildHinglish), /services hain/i);
+  assert.equal(buildHinglish.context.language, 'hi');
+  assert.match(combinedAnswer(existingEnglish), /Yes.*existing website/i);
+  assert.match(combinedAnswer(existingHinglish), /existing website/i);
+  assert.equal(existingHinglish.context.language, 'hi');
+  assert.match(combinedAnswer(inquiry), /short description/i);
+  assert.match(combinedAnswer(inquiry), /finished specification/i);
+});
+
 test('tolerates a small typo', async () => {
   assert.match(combinedAnswer(await ask('pricng')), /does not publish fixed prices/i);
 });

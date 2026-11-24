@@ -89,6 +89,7 @@ export const detectLanguage = (message, fallback = 'en') => {
   const hindiWords = new Set([
     'aur', 'batao', 'chahiye', 'din', 'hai', 'ho', 'hoga', 'ka', 'kaise',
     'kitna', 'kitne', 'lagega', 'mein', 'me', 'paisa', 'karna', 'karein',
+    'karte', 'karoge', 'banani', 'banwana', 'banwani', 'mujhe', 'sakte',
     'kya', 'nahi', 'naam', 'shukriya', 'theek', 'aap', 'mera', 'meri',
   ]);
   return words.some((word) => hindiWords.has(word)) ? 'hi' : fallback;

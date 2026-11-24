@@ -24,6 +24,7 @@ export default function CtaSection() {
             </p>
             <Link
               to="/contact"
+              className="project-cta-link"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -37,7 +38,7 @@ export default function CtaSection() {
                 boxShadow: '0 8px 32px rgba(37,99,235,0.4)',
               }}
             >
-              Start Your Project <ArrowRight size={18} />
+              Start Your Project <ArrowRight size={18} aria-hidden="true" />
             </Link>
           </div>
         </motion.div>

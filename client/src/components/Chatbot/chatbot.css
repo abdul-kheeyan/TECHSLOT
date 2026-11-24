@@ -94,6 +94,20 @@
   background: rgba(56, 189, 248, 0.1);
 }
 
+.chatbot-close:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.chatbot-storage-warning {
+  padding: 0.6rem 0.75rem;
+  color: #fde68a;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: var(--radius-md);
+  font-size: var(--text-xs);
+}
+
 .chatbot-conversation {
   display: flex;
   flex: 1;

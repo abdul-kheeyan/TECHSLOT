@@ -5,7 +5,17 @@ export const intents = [
     id: 'services',
     strong: ['services', 'service', 'web development', 'website development', 'web application', 'mern', 'react development'],
     weak: ['website', 'websites', 'build', 'offer', 'provide'],
-    phrases: ['what services do you offer', 'what do you offer', 'what can you build', 'do you build websites'],
+    phrases: [
+      'what services do you offer',
+      'what do you offer',
+      'what can you build',
+      'do you build websites',
+      'can you build a website',
+      'can you make a website for me',
+      'i need a website for my business',
+      'mujhe website banwani hai',
+      'mujhe website chahiye',
+    ],
     exact: [],
     answer: bilingual('TechSlot’s services listed on the website include:', 'Website par listed TechSlot ki services hain:'),
     more: bilingual('Here are the services currently listed on the website:', 'Website par filhaal listed services yeh hain:'),
@@ -111,6 +121,60 @@ export const intents = [
     related: ['pricing', 'timeline', 'services'],
     links: [{ label: bilingual('Open contact form', 'Contact form kholein'), url: '/contact' }],
     offerLead: true,
+  },
+  {
+    id: 'existingWork',
+    strong: ['existing website', 'existing application', 'existing product', 'redesign', 'rebuild'],
+    weak: ['improve', 'update'],
+    phrases: [
+      'can you work on an existing website',
+      'can you work on my existing application',
+      'can you improve my current website',
+      'existing website par kaam karte ho',
+    ],
+    exact: [],
+    answer: bilingual(
+      'Yes. TechSlot can work on an existing website or application, including redesigns, new features, frontend work, or a broader rebuild. The right scope depends on the product and requirements.',
+      'Haan. TechSlot existing website ya application par kaam kar sakta hai—jaise redesign, naye features, frontend work, ya poora rebuild. Sahi scope product aur requirements par depend karega.'
+    ),
+    more: bilingual(
+      'Existing products can be improved, redesigned, extended with features, or rebuilt. Share the current product and the changes you need to discuss a suitable scope.',
+      'Existing product ko improve ya redesign kar sakte hain, features add kar sakte hain, ya rebuild kar sakte hain. Suitable scope discuss karne ke liye current product aur required changes share karein.'
+    ),
+    later: bilingual(
+      'You can share your current website or application and the changes you have in mind through the contact form.',
+      'Aap contact form se apni current website ya application aur required changes share kar sakte hain.'
+    ),
+    ask: bilingual('Would you like to discuss your project?', 'Kya aap apne project par baat karna chahenge?'),
+    related: ['services', 'start', 'process'],
+    links: [{ label: bilingual('Contact TechSlot', 'TechSlot se contact karein'), url: '/contact' }],
+  },
+  {
+    id: 'inquiryDetails',
+    strong: ['first inquiry', 'project brief', 'project details', 'requirements'],
+    weak: ['include', 'share', 'send'],
+    phrases: [
+      'what should i include in my first inquiry',
+      'what details do you need for a project',
+      'pehli inquiry mein kya likhun',
+      'project ke liye kya details bhejun',
+    ],
+    exact: [],
+    answer: bilingual(
+      'A short description of your business, who the product is for, what you want it to do, and your preferred timing or budget is a helpful start. You do not need a finished specification.',
+      'Apne business, product kin logon ke liye hai, usse kya karwana hai, aur preferred timing ya budget ke baare mein thoda batana kaafi hai. Complete specification zaroori nahi.'
+    ),
+    more: bilingual(
+      'You can also mention important features, examples you like, and whether you are starting from scratch or improving an existing product.',
+      'Aap important features, pasand ke examples, aur yeh bhi bata sakte hain ki naya product banana hai ya existing product improve karna hai.'
+    ),
+    later: bilingual(
+      'A few clear sentences are enough to begin; the details can be refined together.',
+      'Shuru karne ke liye kuch saaf sentences kaafi hain; baaki details baad mein milkar finalize kar sakte hain.'
+    ),
+    ask: bilingual('Would you like to send a project inquiry?', 'Kya aap project inquiry bhejna chahenge?'),
+    related: ['start', 'pricing', 'timeline'],
+    links: [{ label: bilingual('Open contact form', 'Contact form kholein'), url: '/contact' }],
   },
   {
     id: 'notOffered',

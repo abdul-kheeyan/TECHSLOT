@@ -2,9 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Bot, MessageCircle, Send, X } from 'lucide-react';
+import { Bot, MessageCircle, Send, Trash2, X } from 'lucide-react';
 import { askChatbot } from '../../services/api';
 import './chatbot.css';
+
+const CHAT_STORAGE_KEY = 'techslot_chat_state_v1';
+const MAX_STORED_MESSAGES = 100;
 
 const initialMessage = {
   id: 0,
@@ -16,17 +19,86 @@ const initialMessage = {
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const wait = (duration) => new Promise((resolve) => window.setTimeout(resolve, duration));
 
+const readSavedChat = () => {
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(CHAT_STORAGE_KEY) || 'null');
+    if (!saved || !Array.isArray(saved.messages)) {
+      return { messages: [initialMessage], context: {}, storageWarning: false };
+    }
+
+    const messages = saved.messages
+      .filter((message) => (
+        message
+        && ['assistant', 'user'].includes(message.role)
+        && typeof message.content === 'string'
+      ))
+      .slice(-MAX_STORED_MESSAGES)
+      .map((message, index) => ({
+        id: Number.isSafeInteger(message.id) ? message.id : index,
+        role: message.role,
+        content: message.content.slice(0, 5000),
+        contactCta: message.contactCta === true,
+        links: Array.isArray(message.links)
+          ? message.links.filter((link) => (
+            link
+            && typeof link.label === 'string'
+            && typeof link.url === 'string'
+          ))
+          : [],
+        quickReplies: Array.isArray(message.quickReplies)
+          ? message.quickReplies.filter((reply) => typeof reply === 'string').slice(0, 10)
+          : [],
+      }));
+
+    return {
+      messages: messages.length ? messages : [initialMessage],
+      context: saved.context && typeof saved.context === 'object' && !Array.isArray(saved.context)
+        ? saved.context
+        : {},
+      storageWarning: false,
+    };
+  } catch {
+    return { messages: [initialMessage], context: {}, storageWarning: true };
+  }
+};
+
 export default function Chatbot() {
+  const [savedChat] = useState(readSavedChat);
   const messagesEndRef = useRef(null);
-  const messageIdRef = useRef(0);
+  const messageIdRef = useRef(Math.max(
+    0,
+    ...savedChat.messages.map(({ id }) => Number.isSafeInteger(id) ? id : 0)
+  ));
   const geometryRef = useRef(null);
-  const contextRef = useRef({});
+  const messagesRef = useRef(savedChat.messages);
+  const contextRef = useRef(savedChat.context);
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([initialMessage]);
+  const [messages, setMessages] = useState(savedChat.messages);
   const [draft, setDraft] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [storageWarning, setStorageWarning] = useState(savedChat.storageWarning);
   const [geometry, setGeometry] = useState(null);
+
+  const persistChat = (nextMessages, nextContext) => {
+    messagesRef.current = nextMessages;
+    contextRef.current = nextContext;
+    try {
+      window.localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify({
+        messages: nextMessages.slice(-MAX_STORED_MESSAGES),
+        context: nextContext,
+      }));
+      setStorageWarning(false);
+    } catch {
+      setStorageWarning(true);
+    }
+  };
+
+  const appendMessage = (message) => {
+    const nextMessages = [...messagesRef.current, message].slice(-MAX_STORED_MESSAGES);
+    persistChat(nextMessages, contextRef.current);
+    setMessages(nextMessages);
+  };
 
   useEffect(() => {
     const updateVisualViewport = () => {
@@ -159,10 +231,7 @@ export default function Chatbot() {
     const message = value.trim();
     if (!message || loading) return;
 
-    setMessages((current) => [
-      ...current,
-      { id: ++messageIdRef.current, role: 'user', content: message },
-    ]);
+    appendMessage({ id: ++messageIdRef.current, role: 'user', content: message });
     setDraft('');
     setError('');
     setLoading(true);
@@ -170,26 +239,23 @@ export default function Chatbot() {
     try {
       const { data } = await askChatbot(message, contextRef.current);
       const result = data.data;
-      contextRef.current = result.context || {};
+      persistChat(messagesRef.current, result.context || {});
       const answers = Array.isArray(result.answers)
         ? result.answers
         : [{ answer: result.answer, contactCta: result.contactCta, links: [] }];
       for (let index = 0; index < answers.length; index += 1) {
         if (index > 0) await wait(350);
         const answer = answers[index];
-        setMessages((current) => [
-          ...current,
-          {
-            id: ++messageIdRef.current,
-            role: 'assistant',
-            content: answer.answer,
-            contactCta: answer.contactCta,
-            links: answer.links || [],
-            quickReplies: index === answers.length - 1
-              ? (result.suggestions || []).map((suggestion) => suggestion.text)
-              : [],
-          },
-        ]);
+        appendMessage({
+          id: ++messageIdRef.current,
+          role: 'assistant',
+          content: answer.answer,
+          contactCta: answer.contactCta,
+          links: answer.links || [],
+          quickReplies: index === answers.length - 1
+            ? (result.suggestions || []).map((suggestion) => suggestion.text)
+            : [],
+        });
       }
     } catch (requestError) {
       setError(
@@ -198,6 +264,21 @@ export default function Chatbot() {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const clearConversation = () => {
+    if (loading) return;
+    messagesRef.current = [initialMessage];
+    contextRef.current = {};
+    setMessages(messagesRef.current);
+    messageIdRef.current = 0;
+    setError('');
+    try {
+      window.localStorage.removeItem(CHAT_STORAGE_KEY);
+      setStorageWarning(false);
+    } catch {
+      setStorageWarning(true);
     }
   };
 
@@ -225,8 +306,18 @@ export default function Chatbot() {
               <div className="chatbot-header-icon"><Bot size={20} /></div>
               <div className="chatbot-heading">
                 <strong>TechSlot Assistant</strong>
-                <span>Answers based on this website</span>
+                <span>Website answers · saved on this device</span>
               </div>
+              <button
+                className="chatbot-close chatbot-clear"
+                type="button"
+                onClick={clearConversation}
+                aria-label="Clear chat history"
+                title="Clear chat history"
+                disabled={loading}
+              >
+                <Trash2 size={16} />
+              </button>
               <button
                 className="chatbot-close"
                 type="button"
@@ -238,6 +329,11 @@ export default function Chatbot() {
             </header>
 
             <div className="chatbot-conversation" aria-live="polite">
+              {storageWarning && (
+                <p className="chatbot-storage-warning" role="status">
+                  Chat history could not be saved in this browser.
+                </p>
+              )}
               {messages.map((message) => (
                 <div className="chatbot-turn" key={message.id}>
                   <div className={`chatbot-message-row ${message.role}`}>

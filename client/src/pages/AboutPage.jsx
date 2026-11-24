@@ -126,9 +126,10 @@ export default function AboutPage() {
           <div style={{ textAlign: 'center', marginTop: '3rem' }}>
             <Link
               to="/contact"
+              className="about-cta-link"
               style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--color-blue-accent)', fontWeight: 600 }}
             >
-              Let&apos;s work together <ArrowRight size={16} />
+              Let&apos;s work together <ArrowRight size={16} aria-hidden="true" />
             </Link>
           </div>
         </div>
