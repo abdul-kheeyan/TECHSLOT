@@ -1,6 +1,9 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail } from 'lucide-react';
 import logoImage from '../assets/TSlogo.png';
+import Modal from './Modal';
+import TermsAndConditions from './TermsAndConditions';
 
 const footerLinks = {
   Navigation: [
@@ -24,6 +27,7 @@ const EMAIL_ADDRESS = 'kheeyanport@gmail.com';
 const GMAIL_COMPOSE_URL = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(EMAIL_ADDRESS)}`;
 
 export default function Footer() {
+  const [termsOpen, setTermsOpen] = useState(false);
   const year = new Date().getFullYear();
   return (
     <footer style={{ background: '#090a0c', borderTop: '1px solid rgba(255,255,255,0.08)', marginTop: 'auto' }}>
@@ -125,8 +129,31 @@ export default function Footer() {
           >
             {EMAIL_ADDRESS}
           </a>
+          <button
+            type="button"
+            onClick={() => setTermsOpen(true)}
+            style={{
+              padding: 0,
+              color: 'var(--color-text-muted)',
+              fontSize: '0.8rem',
+              transition: 'color 150ms ease',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--color-blue-accent)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--color-text-muted)'; }}
+          >
+            Terms &amp; Conditions
+          </button>
         </div>
       </div>
+
+      <Modal
+        isOpen={termsOpen}
+        onClose={() => setTermsOpen(false)}
+        title="Terms & Conditions"
+        size="xl"
+      >
+        <TermsAndConditions />
+      </Modal>
 
       <style>{`
         @media (max-width: 768px) {
