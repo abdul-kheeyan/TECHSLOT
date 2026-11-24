@@ -200,7 +200,9 @@ export default function ContactPage() {
               </div>
 
               <div className="form-group" style={{ marginBottom: '1.25rem' }}>
-                <label className="form-label">Budget Range <span>*</span></label>
+                <label className="form-label">
+                  Budget Range (USD) <span>*</span>
+                </label>
                 <div className="option-selector">
                   {BUDGET_OPTIONS.map((b) => (
                     <button

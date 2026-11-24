@@ -5,7 +5,7 @@ import { processChatMessage, scoreIntent } from '../chatbot/engine.js';
 
 const contactOptions = {
   projectType: ['Website', 'Web Application', 'MERN Application', 'Frontend', 'Backend/API', 'Other'],
-  budget: ['Under ₹10,000', '₹10,000 - ₹25,000', '₹25,000 - ₹50,000', '₹50,000+', 'Custom'],
+  budget: ['Under $500', '$500 - $1,500', '$1,500 - $3,000', '$3,000 - $7,500', '$7,500+', 'Custom'],
   timeline: ['1-2 Weeks', '2-4 Weeks', '1-2 Months', 'Flexible'],
 };
 const savedLeads = [];
@@ -117,7 +117,7 @@ test('lead flow validates and saves all requested data', async () => {
     name: 'Riya Sharma',
     email: 'riya@example.com',
     projectType: 'Website',
-    budget: '₹25,000 - ₹50,000',
+    budget: '$1,500 - $3,000',
     timeline: '2-4 Weeks',
     message: 'I need a responsive business website with a contact form.',
   });
